@@ -1,0 +1,33 @@
+version: '3.4'
+secrets:
+  adminpwd:
+    file: .adminpwd  # Assuming file: ./.adminpwd
+  pgpass:
+    file: .pgpass    # Assuming file: ./.pgpass
+volumes:
+  odoo-data: {driver: local}
+  psql: {driver: local}
+
+services:
+  wdb:
+    image: xoes/wdb-server
+    ports: ['1984:1984']
+  odoo:
+    image: "${MY_PROJECT_IMAGE}:dev"
+    ports: ['80:8069', '8072:8072']
+    depends_on: ['wdb']
+    tty: true  # Do not avoid json logging
+    build:
+      args:
+        FROM_IMAGE: "${MY_PROJECT_IMAGE}"
+      context: https://github.com/xoes/dockery-odoo.git#shared:dev
+    command: ['--dev', 'wdb,reload,qweb,werkzeug,xml']
+    volumes:
+      # Development config (odoo)
+      - ./cfg:/opt/odoo/.odoorc.d:ro
+      # Project code
+      - ./src:/opt/odoo/addons/090
+      # Vendored Code
+      - ./vendor/odoo/cc/odoo:/opt/odoo/odoo:ro
+      - ./vendor/odoo/cc/addons:/opt/odoo/addons/000:ro
+      - ./vendor/odoo/ee:/opt/odoo/addons/001:ro

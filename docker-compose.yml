@@ -1,0 +1,52 @@
+version: '3.4'
+secrets:
+  adminpwd:
+    external: true
+  pgpass:
+    external: true
+volumes:
+  odoo-data: 
+    external: true
+  psql: 
+    external: true
+services:
+  odoo:
+    image: "${MY_PROJECT_IMAGE}"
+    volumes:
+      - odoo-data:/var/lib/odoo
+    depends_on: ['db-node']
+    secrets:
+      - source: adminpwd
+        target: /run/secrets/adminpwd
+        uid:    "9001"
+        gid:    "9001"
+        mode:   0400
+      - source: pgpass
+        target: /run/secrets/pgpass
+        uid:    "9001"
+        gid:    "9001"
+        mode:   0400
+    configs:
+      - source: odoo-base
+        target: /opt/odoo/.odoorc.d/odoo-base
+      - source: odoo-logging
+        target: /opt/odoo/.odoorc.d/odoo-logging
+      - source: odoo-mutiproc
+        target: /opt/odoo/.odoorc.d/odoo-mutiproc
+      - source: odoo-smtp
+        target: /opt/odoo/.odoorc.d/odoo-smtp
+  db-node:
+    image: 'postgres'
+    volumes: ['psql:/var/lib/postgresql/data']
+    environment:
+      - APP_PGPASS_FILE=/run/secrets/pgpass
+    secrets:
+      - source: pgpass
+        target: /run/secrets/pgpass
+        uid:    "70"
+        gid:    "70"
+        mode:   0400
+    networks:
+      default:
+        aliases:
+         - db
