@@ -11,7 +11,8 @@ volumes:
     external: true
 services:
   odoo:
-    image: "${MY_PROJECT_IMAGE}"
+    # CI_REGISTRY_IMAGE is a Gitlab CI Env variable
+    image: "${CI_REGISTRY_IMAGE:-${IMAGE}}"
     volumes:
       - odoo-data:/var/lib/odoo
     depends_on: ['db-node']
