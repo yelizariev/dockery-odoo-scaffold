@@ -12,7 +12,17 @@ services:
   wdb:
     image: xoes/wdb-server
     ports: ['1984:1984']
+
+  db-node:
+    # 10-fix-secrets-perms-pgpass.sh to acts upon *_insecure files
+    secrets:
+      - source: pgpass
+        target: /run/secrets/pgpass_insecure
   odoo:
+    # 10-fix-secrets-perms-pgpass.sh to acts upon *_insecure files
+    secrets:
+      - source: pgpass
+        target: /run/secrets/pgpass_insecure
     image: "${IMAGE}:dev"
     ports: ['80:8069', '8072:8072']
     depends_on: ['wdb']
