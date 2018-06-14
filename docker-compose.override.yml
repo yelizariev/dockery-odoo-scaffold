@@ -30,7 +30,7 @@ services:
     build:
       args:
         FROM_IMAGE: "${IMAGE}"
-      context: https://github.com/xoes/dockery-odoo.git#shared:dev
+      context: https://github.com/xoe-labs/dockery-odoo.git#shared:images/dev
     command: ['--dev', 'wdb,reload,qweb,werkzeug,xml']
     volumes:
       # Development config (odoo)
