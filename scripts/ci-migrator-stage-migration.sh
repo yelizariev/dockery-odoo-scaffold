@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-set -Eeuxo pipefail
+set -eux pipefail
 
 for db in ${1}; do
     /entrypoint-migrator.sh -f ./.marabunta.yml --database "${db}"

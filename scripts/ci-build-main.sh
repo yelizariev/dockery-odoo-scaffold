@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 # Usage: ci-build-main.sh <SUFFIX>
 
-set -Eeuxo pipefail
+set -eux pipefail
 
 image="${IMAGE}:${ODOO_VERSION}-${1}"
 
