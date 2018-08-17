@@ -17,8 +17,8 @@ before_script:
 - consul version
 - etcdctl version
 # Set the repo's environment
-- source .env
-- chmod +x scripts/*
+- export $(egrep -v '^#' .env | xargs)
+- chmod -R +x ./scripts
 
 variables:
   PREBUILD_SUFFIX: pre-build
@@ -32,7 +32,7 @@ Update-Project-Image:
   except: ['/^HOTFIX-.*$/']
   script:
     - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
-    - scripts/ci-build-main.sh "${PREBUILD_SUFFIX}"
+    - ./scripts/ci-build-main.sh "${PREBUILD_SUFFIX}"
 
 Update-Tester:
   stage: Build
@@ -40,14 +40,14 @@ Update-Tester:
   except: ['/^HOTFIX-.*$/']
   script:
     - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
-    - scripts/ci-build-helper.sh "${TESTER}"
+    - ./scripts/ci-build-helper.sh "${TESTER}"
 
 Update-Migrator:
   stage: Build
   only: [tags]
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - scripts/ci-build-helper.sh "${MIGRATOR}"
+    - ./scripts/ci-build-helper.sh "${MIGRATOR}"
 
 Test-Diff:
   image: $IMAGE:tester
@@ -90,7 +90,7 @@ Migrate-Staged-DBs:
   before_script:
     - echo "... mute global before script."
   script:
-    - scripts/ci-migrator-stage-migration.sh "${STAGED_DBS}"
+    - ./scripts/ci-migrator-stage-migration.sh "${STAGED_DBS}"
 
 Release-Project-Image:
   stage: Release
@@ -98,7 +98,7 @@ Release-Project-Image:
   allow_failure: false
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - scripts/ci-build-main.sh "${CI_COMMIT_TAG}"
+    - ./scripts/ci-build-main.sh "${CI_COMMIT_TAG}"
   environment: production
 
 # CI GIT & Component Configuration
