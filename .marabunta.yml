@@ -1,0 +1,6 @@
+migration:
+  versions:
+    - version: 10.0.0
+      addons:
+        upgrade:
+          - your_addon
