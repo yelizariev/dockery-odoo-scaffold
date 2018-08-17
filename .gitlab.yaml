@@ -1,0 +1,109 @@
+# Repaclace this with your custom ci image, if needed
+image: xoelabs/dockery-odoo:ci
+cache:
+  untracked: true
+  key: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+stages:
+  - Pre-Build
+  - Build
+  - Test
+  - Stage
+  - Release
+before_script:
+- docker version
+- docker-compose version
+- kubectl version --client
+- terraform version
+- consul version
+- etcdctl version
+# Set the repo's environment
+- source .env
+- chmod +x scripts/*
+
+variables:
+  PREBUILD_SUFFIX: pre-build
+  TESTER: tester
+  MIGRATOR: migrator
+
+
+Update-Project-Image:
+  stage: Pre-Build
+  only: [branches]
+  except: ['/^HOTFIX-.*$/']
+  script:
+    - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+    - scripts/ci-build-main.sh "${PREBUILD_SUFFIX}"
+
+Update-Tester:
+  stage: Build
+  only: [branches]
+  except: ['/^HOTFIX-.*$/']
+  script:
+    - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+    - scripts/ci-build-helper.sh "${TESTER}"
+
+Update-Migrator:
+  stage: Build
+  only: [tags]
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - scripts/ci-build-helper.sh "${MIGRATOR}"
+
+Test-Diff:
+  image: $IMAGE:tester
+  only: [branches]
+  except: ['/^HOTFIX-.*$/']
+  stage: Test
+  variables:
+    # Database connection
+    PGHOST: YOURHOST
+    PGPORT: 5432
+    PGUSER: YOURUSER
+    PGPASSWORD: YOUERPASSWORD # Prefer using more secure gitlab ci variables
+    # Modules configuration
+    BASEBRANCH: origin/master
+    INCLUDE: YOUR_INTEGRATION_TEST_MODULE
+    # Helper variables
+    ODOO_BASEPATH: /testbed
+    DB_SLUG: $CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG
+  before_script:
+    - echo "... mute global before script."
+  script:
+    - prepare-testbed
+    # Symlink vendored modules
+    # - ln -s "${CI_PROJECT_DIR}/vendor/oca/job-queue"       "${ODOO_BASEPATH}/addons/010"
+    - exec-test-on-diff
+
+Migrate-Staged-DBs:
+  image:
+    name: ${IMAGE}:migrator
+    entrypoint: [""]
+  only: [tags]
+  stage: Stage
+  variables:
+    STAGED_DBS: "vspace separated list of existing dbs to stage migration"
+    # Database connection
+    MARABUNTA_DB_HOST: YOURHOST
+    MARABUNTA_DB_PORT: 5432
+    MARABUNTA_DB_USER: YOURUSER
+    MARABUNTA_DB_PASSWORD: YOURPASSWORD
+  before_script:
+    - echo "... mute global before script."
+  script:
+    - scripts/ci-migrator-stage-migration.sh "${STAGED_DBS}"
+
+Release-Project-Image:
+  stage: Release
+  only: [tags]
+  allow_failure: false
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - scripts/ci-build-main.sh "${CI_COMMIT_TAG}"
+  environment: production
+
+# CI GIT & Component Configuration
+variables:
+  GIT_DEPTH: '10'
+  GIT_STRATEGY: fetch
+  GIT_SUBMODULE_STRATEGY: 'recursive'
+  GIT_SSL_NO_VERIFY: "true"
