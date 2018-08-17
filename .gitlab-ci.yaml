@@ -86,7 +86,11 @@ Migrate-Staged-DBs:
   before_script:
     - echo "... mute global before script."
   script:
-    - ./scripts/ci-migrator-stage-migration.sh "${STAGED_DBS}"
+    - |
+        for db in ${STAGED_DBS}; do
+            /entrypoint-migrator.sh -f ./.marabunta.yml --database "${db}"
+        done
+
 
 Release-Project-Image:
   stage: Release
