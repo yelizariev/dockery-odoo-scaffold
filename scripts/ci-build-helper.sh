@@ -3,7 +3,7 @@
 
 # Usage: ci-build-helper.sh <SUFFIX>
 
-set -eux pipefail
+set -eux
 
 docker build --tag "${IMAGE}:${1}" \
     --build-arg FROM_IMAGE="${IMAGE}:${ODOO_VERSION}" \

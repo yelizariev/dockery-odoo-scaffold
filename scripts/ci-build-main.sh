@@ -2,7 +2,7 @@
 
 # Usage: ci-build-main.sh <SUFFIX>
 
-set -eux pipefail
+set -eux
 
 if [ $# -eq 0 ]; then
     image="${IMAGE}:${ODOO_VERSION}"
