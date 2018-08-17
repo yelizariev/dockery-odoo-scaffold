@@ -30,7 +30,7 @@ services:
     build:
       args:
         FROM_IMAGE: "${FROM}:${ODOO_VERSION}"
-      context: "${FROMREPO}:#shared:images/dev"
+      context: "${FROMREPO}:#master:images/dev"
     command: ['--dev', 'wdb,reload,qweb,werkzeug,xml']
     volumes:
       # Development config (odoo)

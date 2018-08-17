@@ -6,6 +6,6 @@
 set -eux pipefail
 
 docker build --tag "${IMAGE}:${1}" \
-    --build-arg FROM_IMAGE="${IMAGE}:${ODOO_VERSION}-${PREBUILD_SUFFIX}" \
+    --build-arg FROM_IMAGE="${IMAGE}:${ODOO_VERSION}" \
     "${FROMREPO}#master:images/${1}"
 docker push "${IMAGE}:${1}" &> /dev/null

@@ -20,19 +20,13 @@ before_script:
 - export $(egrep -v '^#' .env | xargs)
 - chmod -R +x ./scripts
 
-variables:
-  PREBUILD_SUFFIX: pre-build
-  TESTER: tester
-  MIGRATOR: migrator
-
-
 Update-Project-Image:
   stage: Pre-Build
   only: [branches]
   except: ['/^HOTFIX-.*$/']
   script:
     - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
-    - ./scripts/ci-build-main.sh "${PREBUILD_SUFFIX}"
+    - ./scripts/ci-build-main.sh
 
 Update-Tester:
   stage: Build
@@ -40,14 +34,14 @@ Update-Tester:
   except: ['/^HOTFIX-.*$/']
   script:
     - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
-    - ./scripts/ci-build-helper.sh "${TESTER}"
+    - ./scripts/ci-build-helper.sh tester
 
 Update-Migrator:
   stage: Build
   only: [tags]
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - ./scripts/ci-build-helper.sh "${MIGRATOR}"
+    - ./scripts/ci-build-helper.sh migrator
 
 Test-Diff:
   image: $IMAGE:tester
