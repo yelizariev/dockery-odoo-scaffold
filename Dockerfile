@@ -1,4 +1,4 @@
-FROM xoelabs/dockery-odoo:v10
+FROM xoelabs/dockery-odoo:v11
 
 ENV ODOO_ENTERPRISE=false
 
