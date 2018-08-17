@@ -23,14 +23,14 @@ services:
     secrets:
       - source: pgpass
         target: /run/secrets/pgpass_insecure
-    image: "${IMAGE}:dev"
+    image: "${IMAGE}:${ODOO_VERSION}-dev"
     ports: ['80:8069', '8072:8072']
     depends_on: ['wdb']
     tty: true  # Do not avoid json logging
     build:
       args:
-        FROM_IMAGE: "${IMAGE}"
-      context: https://github.com/xoe-labs/dockery-odoo.git#shared:images/dev
+        FROM_IMAGE: "${FROM}:${ODOO_VERSION}"
+      context: "${FROMREPO}:#shared:images/dev"
     command: ['--dev', 'wdb,reload,qweb,werkzeug,xml']
     volumes:
       # Development config (odoo)

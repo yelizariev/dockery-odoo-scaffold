@@ -5,9 +5,9 @@ secrets:
   pgpass:
     external: true
 volumes:
-  odoo-data: 
+  odoo-data:
     external: true
-  psql: 
+  psql:
     external: true
 services:
   odoo:
