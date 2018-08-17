@@ -44,7 +44,8 @@ Update-Migrator:
     - ./scripts/ci-build-helper.sh migrator
 
 Test-Diff:
-  image: $IMAGE:tester
+  # Make sure $CI_REGISTRY_IMAGE is the same as $IMAGE
+  image: "${CI_REGISTRY_IMAGE}:tester"
   only: [branches]
   except: ['/^HOTFIX-.*$/']
   stage: Test
@@ -69,8 +70,9 @@ Test-Diff:
     - exec-test-on-diff
 
 Migrate-Staged-DBs:
+  # Make sure $CI_REGISTRY_IMAGE is the same as $IMAGE
   image:
-    name: ${IMAGE}:migrator
+    name: "${CI_REGISTRY_IMAGE}:migrator"
     entrypoint: [""]
   only: [tags]
   stage: Stage
