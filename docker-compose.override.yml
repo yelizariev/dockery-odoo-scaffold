@@ -1,4 +1,36 @@
 version: '3.4'
+
+# x-* key is ignored by docker-compose
+x-odoo-code-volumes:
+  &default-odoo-code-volumes
+  # Get test results out of the container
+  - ./_testlogs:/testlogs
+  # Development config (odoo)
+  - ./cfg:/opt/odoo/.odoorc.d:ro
+  # Project code
+  - ./src:/opt/odoo/addons/090
+  # Vendored Code
+  - ./vendor/odoo/cc/odoo:/opt/odoo/odoo:ro
+  - ./vendor/odoo/cc/addons:/opt/odoo/addons/000:ro
+  - ./vendor/odoo/ee:/opt/odoo/addons/001:ro
+
+# x-* key is ignored by docker-compose
+x-odoo:
+  &default-odoo
+  # 10-fix-secrets-perms-pgpass.sh to acts upon *_insecure files
+  secrets:
+    - source: pgpass
+      target: /run/secrets/pgpass_insecure
+  image: "${IMAGE}:${ODOO_VERSION}-dev"
+  ports: ['80:8069', '8072:8072']
+  depends_on: ['wdb']
+  tty: true  # Do not avoid json logging
+  build:
+    args:
+      FROM_IMAGE: "${FROM}:${ODOO_VERSION}"
+    context: "${FROMREPO}#master:images/dev"
+  volumes: *default-odoo-code-volumes
+
 secrets:
   adminpwd:
     file: .adminpwd  # Assuming file: ./.adminpwd
@@ -19,25 +51,9 @@ services:
       - source: pgpass
         target: /run/secrets/pgpass_insecure
   odoo:
-    # 10-fix-secrets-perms-pgpass.sh to acts upon *_insecure files
-    secrets:
-      - source: pgpass
-        target: /run/secrets/pgpass_insecure
-    image: "${IMAGE}:${ODOO_VERSION}-dev"
-    ports: ['80:8069', '8072:8072']
-    depends_on: ['wdb']
-    tty: true  # Do not avoid json logging
-    build:
-      args:
-        FROM_IMAGE: "${FROM}:${ODOO_VERSION}"
-      context: "${FROMREPO}#master:images/dev"
+    << : *default-odoo
     command: ['--dev', 'wdb,reload,qweb,werkzeug,xml']
-    volumes:
-      # Development config (odoo)
-      - ./cfg:/opt/odoo/.odoorc.d:ro
-      # Project code
-      - ./src:/opt/odoo/addons/090
-      # Vendored Code
-      - ./vendor/odoo/cc/odoo:/opt/odoo/odoo:ro
-      - ./vendor/odoo/cc/addons:/opt/odoo/addons/000:ro
-      - ./vendor/odoo/ee:/opt/odoo/addons/001:ro
+  odoo-test:
+    << : *default-odoo
+    entrypoint: ['/entrypoint.sh', '--test-enable', '--stop-after-init', '--logfile', '/testlogs']
+    command: []

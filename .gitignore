@@ -1,5 +1,5 @@
 # Odoo testlogs & chrome test screencasts / screenshots
-testlogs/
+_testlogs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
