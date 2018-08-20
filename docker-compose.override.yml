@@ -55,7 +55,7 @@ services:
     << : *default-odoo
     entrypoint: ['/entrypoint.sh', '--dev', 'wdb,reload,qweb,werkzeug,xml']
     command: []
-  odoo-test:
+  tests:
     << : *default-odoo
     entrypoint: ['/entrypoint.sh', '--dev', 'wdb,reload,qweb,werkzeug,xml', '--test-enable', '--stop-after-init', '--logfile', '/testlogs/']
     command: []
