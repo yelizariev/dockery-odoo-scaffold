@@ -67,3 +67,6 @@ services:
     << : *default-odoo
     entrypoint: ['/entrypoint.sh', 'shell']
     command: []
+  patches:
+    << : *default-odoo
+    command: ['patches']
