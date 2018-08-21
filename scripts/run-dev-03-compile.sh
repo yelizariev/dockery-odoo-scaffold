@@ -5,11 +5,14 @@
 # Merges all branches pertaining to the respectiv basee branch
 # Tipp: enable git rerere to record and remember your conflict resolution.      It will make your life easier!
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
 folders=("vendor/odoo/cc/.git" "vendor/odoo/ee/.git")
 devbranch="master"
 branches=("11.0")
 owndev="dev"
 prefix="remotes/"
+exluded=$(cat "${DIR}/run-dev-03-compile-excluded")
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -44,17 +47,23 @@ for folder in "${folders[@]}"; do
     for branch in "${branches[@]}"; do
         candidate_branches="remotes/${owndev}/${branch}-"
         eval "${gitcmd} checkout ${branch}"
-        newbranch="${branch}++compiled"
+        newbranch="${branch}---compiled"
         eval "${gitcmd} checkout -b ${newbranch}"
         candidates=($(eval "$gitcmd branch -a | grep '${candidate_branches}'"))
         for candidate in "${candidates[@]}";do
             candidate=${candidate#"$prefix"}
-            if ! eval "${gitcmd} merge --no-ff ${candidate}"; then
-                merge_alert
+            skip=
+            for item in ${exluded}; do
+                case "${candidate}" in ${item}) skip=yes; esac
+            done
+            if [[ "${skip}" != "yes" ]]; then
+                if ! eval "${gitcmd} merge --no-ff ${candidate}"; then
+                    merge_alert
+                fi
             fi
         done
         echo -e "\nPushing ${newbranch} to ${owndev}"
-        eval "${gitcmd} push -f ${owndev}"
+        eval "${gitcmd} push -f ${owndev} ${newbranch}"
         eval "${gitcmd} checkout ${branch}"
         eval "${gitcmd} branch -D ${newbranch}"
     done
