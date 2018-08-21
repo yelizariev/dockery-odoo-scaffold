@@ -57,7 +57,7 @@ services:
     command: []
   tests:
     << : *default-odoo
-    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,reload,qweb,werkzeug,xml', '--test-enable', '--stop-after-init', '--logfile', '/testlogs/']
+    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,qweb,werkzeug,xml', '--test-enable', '--stop-after-init', '--logfile', '/testlogs/']
     command: []
   scaffold:
     << : *default-odoo
