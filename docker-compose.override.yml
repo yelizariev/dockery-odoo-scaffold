@@ -27,7 +27,7 @@ x-odoo:
   tty: true  # Do not avoid json logging
   build:
     args:
-      FROM_IMAGE: "${FROM}:${ODOO_VERSION}"
+      FROM_IMAGE: "${IMAGE}:${ODOO_VERSION}"
     context: "${FROMREPO}#master:images/dev"
   volumes: *default-odoo-code-volumes
 
