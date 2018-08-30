@@ -1,4 +1,5 @@
-FROM xoelabs/dockery-odoo:11.0
+ARG  FROM_IMAGE xoelabs/dockery-odoo:11.0
+FROM ${FROM_IMAGE}
 
 ENV ODOO_ENTERPRISE=false
 

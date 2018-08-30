@@ -13,6 +13,8 @@ services:
   odoo:
     image: "${IMAGE}:${ODOO_VERSION}"
     build:
+      args:
+        FROM_IMAGE: "${FROM}:${ODOO_VERSION}"
       context: .
     volumes:
       - odoo-data:/var/lib/odoo

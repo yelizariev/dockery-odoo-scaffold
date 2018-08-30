@@ -10,7 +10,11 @@ else
     image="${IMAGE}:${ODOO_VERSION}-${1}"
 fi
 
-docker pull "${FROM}:${ODOO_VERSION}" &> /dev/null
+from="${FROM}:${ODOO_VERSION}"
 
-docker build --tag "${image}" .
+docker pull "${from}" &> /dev/null
+
+docker build --tag "${image}" \
+    --build-arg FROM_IMAGE="${from}" \
+    .
 docker push "${image}" &> /dev/null
