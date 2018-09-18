@@ -40,7 +40,7 @@ services:
       - source: odoo-smtp
         target: /opt/odoo/.odoorc.d/odoo-smtp
   db-node:
-    image: 'postgres'
+    image: '${FROM}:postgres'
     volumes: ['psql:/var/lib/postgresql/data']
     environment:
       - APP_PGPASS_FILE=/run/secrets/pgpass
