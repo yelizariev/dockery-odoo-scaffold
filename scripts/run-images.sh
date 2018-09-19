@@ -13,7 +13,7 @@ if [ "$1" = '--pull' ]; then
     docker pull "${FROM}:${ODOO_VERSION}"
 fi
 
-# Create a dommy folder in case enterrpise has nt been cloned previously
+# Create a dummy folder in case enterprise has nt been cloned previously
 # Otherwise, docker build would fail (ONBUILD)
 if [ ! -d "/vendor/odoo/ee" ]; then
 	mkdir "${DIR}/../vendor/odoo/ee"
