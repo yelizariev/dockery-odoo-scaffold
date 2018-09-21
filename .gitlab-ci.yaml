@@ -23,6 +23,9 @@ before_script:
 Update-Project-Image:
   stage: Pre-Build
   only: [branches]
+  # Run this job on runners with docker-socket binding
+  # See: https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-socket-binding
+  tags: [image-builder]
   except: ['/^HOTFIX-.*$/']
   script:
     - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
@@ -31,6 +34,9 @@ Update-Project-Image:
 Update-Tester:
   stage: Build
   only: [branches]
+  # Run this job on runners with docker-socket binding
+  # See: https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-socket-binding
+  tags: [image-builder]
   except: ['/^HOTFIX-.*$/']
   script:
     - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
@@ -39,6 +45,9 @@ Update-Tester:
 Update-Migrator:
   stage: Build
   only: [tags]
+  # Run this job on runners with docker-socket binding
+  # See: https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-socket-binding
+  tags: [image-builder]
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - ./scripts/ci-build-helper.sh migrator
@@ -95,6 +104,9 @@ Migrate-Staged-DBs:
 Release-Project-Image:
   stage: Release
   only: [tags]
+  # Run this job on runners with docker-socket binding
+  # See: https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-socket-binding
+  tags: [image-builder]
   allow_failure: false
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
