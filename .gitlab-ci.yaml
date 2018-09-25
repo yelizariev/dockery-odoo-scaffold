@@ -9,6 +9,7 @@ stages:
   - Test
   - Stage
   - Release
+  - Deploy
 before_script:
 - docker version
 - docker-compose version
@@ -100,6 +101,16 @@ Migrate-Staged-DBs:
             /entrypoint-migrator.sh -f ./.marabunta.yml --database "${db}"
         done
 
+Release-Review-Image:
+  stage: Release
+  only: [branches]
+  # Run this job on runners with docker-socket binding
+  # See: https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-socket-binding
+  tags: [image-builder]
+  except: ['/^HOTFIX-.*$/']
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - ./scripts/ci-build-main.sh "${CI_COMMIT_REF_SLUG}"
 
 Release-Project-Image:
   stage: Release
@@ -111,7 +122,30 @@ Release-Project-Image:
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - ./scripts/ci-build-main.sh "${CI_COMMIT_TAG}"
-  environment: production
+
+Start-Review-App:
+  stage: Deploy
+  only: [branches]  # This is a Review-Deployment
+  variables:
+    REVIEW_DOMAIN: example.com
+    DB_SLUG: $CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG  # We re-use the testing environment
+  script:
+    - echo "Deploy review app"
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://$CI_ENVIRONMENT_SLUG.${REVIEW_DOMAIN}/web/login?db=${DB_SLUG}&login=admin&redirect=/web?debug=1
+    on_stop: Stop-Review-App
+
+Stop-Review-App:
+  stage: Deploy
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - echo "Remove review app"
+  when: manual
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
 
 # CI GIT & Component Configuration
 variables:
