@@ -1,0 +1,70 @@
+apiVersion: "odoo.k8s.io/v1alpha1"
+kind: "OdooCluster"
+metadata:
+  name: "REVIEWAPPNAME"
+  namespace: "odoo-review-apps"
+spec:
+  # WIP API
+  # config:
+  #   db:
+  #     name: false
+  #     template: template0
+  #     list: true
+  #     filter: "^.*$"  # TODO: Some more advanced review app branch filtering based on db names
+  #   smtp:
+  #     email_from: ""
+  #     server: ""
+  #     port: "465"
+  #     ssl: "true"
+  #     user: ""
+  #     password: ""
+  tracks:
+    - name: "v10"
+      image:
+        # Create registry credentials
+        # See: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-in-the-cluster-that-holds-your-authorization-token
+        secret: REGCRED  # Optional
+        registry: "registry.gitlab.com"
+        image: "xoe/odoo/odoo-xoe"
+        tag: "master"
+  tiers:
+    - name: "Server"
+      replicas: 1
+      # qos:
+      # resources:
+    - name: "Cron"
+      replicas: 1
+    - name: "LongPolling"
+      replicas: 1
+  volumes:
+    - name: "Data"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+      # storageClassName:
+    - name: "Backup"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 3Gi
+      # storageClassName:
+
+  pgNsSpec:
+    user: "review-app-db-namespace-user"
+    password: "review-app-db-namespace-password"
+    # userQuota:
+    pgCluster:
+      # Previous deployment of an external service is recommended
+      host: "database"
+      port: "5432"
+      user: "postgres"
+      password: "postgres"
+  # resourceQuotaSpec:
+  adminPassword: "default-admin-password"
+  deployModel: ""
+  nodeSelector: ""
