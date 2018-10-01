@@ -54,6 +54,7 @@ services:
     command: []
   scaffold:
     << : *default-odoo
+    user: "${COMPOSE_IMPERSONATION}"
     entrypoint: ['/entrypoint.sh', 'scaffold']
     command: []
   shell:
