@@ -1,11 +1,9 @@
-## Change FROM_IMAGE value only for customizing dockery-odoo framework
-## For a quickstart, use ours.
-ARG  FROM_IMAGE=xoelabs/dockery-odoo:{{DEFAULT_BRANCH}}
+ARG  FROM_IMAGE=xoelabs/dockery-odoo:{{ DEFAULT_BRANCH }}
 FROM ${FROM_IMAGE}
 
-## If you have access to enterprise
-# ENV ODOO_ENTERPRISE=true
-ENV ODOO_ENTERPRISE=false
+ENV ODOO_ENTERPRISE={{ ENTERPRISE }}
+
+## Adapt from here...
 
 ## Examples of extending your project with vendored modules
 ## NOTE: later *modules* override their previous namesake

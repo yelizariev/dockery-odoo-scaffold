@@ -7,28 +7,15 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-source "${DIR}/../.env"
-
-if [ "$1" = '--pull' ]; then
-    docker pull "${FROM}:${ODOO_VERSION}"
-fi
-
-# Create a dummy folder in case enterprise has nt been cloned previously
-# Otherwise, docker build would fail (ONBUILD)
-if [ ! -d "/vendor/odoo/ee" ]; then
-	mkdir "${DIR}/../vendor/odoo/ee"
-	touch "${DIR}/../vendor/odoo/ee/.gitkeep"
-fi
-
 echo -e "\n${RED}First we build the production image. It contains:${NC}\n"
 echo -e "\t${GREEN}- Odoo Community Code${NC}"
 echo -e "\t${GREEN}- Odoo Enterprise Code (if configured)${NC}"
 echo -e "\t${GREEN}- Vendored modules${NC}"
 echo -e "\t${GREEN}- Your project modules (\`src\` folder)${NC}"
 echo -e "\t${GREEN}- Your further customizations from the Dockerfile${NC}\n"
-docker-compose -f docker-compose.yml build odoo
+docker build --tag "${IMAGE}:${ODOO_VERSION}" --arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}" "${DIR}/../."
 
-echo -e "\n${RED}Now we build the development image atop the production image.\n"
+echo -e "\n${RED}Now we build the allrounder image atop the production image.\n"
 echo -e "\t${GREEN}- Complements additional tools for local dev${NC}"
 echo -e "\t${GREEN}- Remote build context maintained by XOE.${NC}"
 echo -e "\t${GREEN}- Therefore, as dev image evolves, just rebuild.${NC}"
