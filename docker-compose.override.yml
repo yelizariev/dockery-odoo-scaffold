@@ -1,76 +1,25 @@
 version: '3.4'
 
-# x-* key is ignored by docker-compose
-x-odoo-code-volumes:
-  &default-odoo-code-volumes
-  # Get test results out of the container
-  - ./_testlogs:/testlogs
-  # Development config (odoo)
-  - .cfg-default.ini:/opt/odoo/.odoorc.d/01-default:ro
-  - .cfg-custom.ini:/opt/odoo/.odoorc.d/02-custom:ro
-  # Project code
-  - ./src:/opt/odoo/addons/090
-  # Vendored Code
-  - ./vendor/odoo/cc/odoo:/opt/odoo/odoo:ro
-  - ./vendor/odoo/cc/addons:/opt/odoo/addons/000:ro
-  - ./vendor/odoo/ee:/opt/odoo/addons/001:ro
 
 # x-* key is ignored by docker-compose
 x-odoo:
-  &default-odoo
-  # 10-fix-secrets-perms-pgpass.sh to acts upon *_insecure files
-  secrets:
-    - source: pgpass
-      target: /run/secrets/pgpass_insecure
-  image: "${IMAGE}:${ODOO_VERSION}-dev"
-  ports: ['80:8069', '8072:8072']
-  depends_on: ['wdb']
-  tty: true  # Do not avoid json logging
-  build:
-    args:
-      FROM_IMAGE: "${IMAGE}:${ODOO_VERSION}"
-    context: "${FROMREPO}#master:images/dev"
-  volumes: *default-odoo-code-volumes
-
-secrets:
-  adminpwd:
-    file: .adminpwd  # Assuming file: ./.adminpwd
-  pgpass:
-    file: .pgpass    # Assuming file: ./.pgpass
-volumes:
-  odoo-data: {driver: local}
-  psql: {driver: local}
+  &add-additional-volumes
+  volumes:
+  # Put additional volumes here
+  {{ VOLUMES }}
 
 services:
-  wdb:
-    image: xoes/wdb-server
-    ports: ['1984:1984']
   odoo:
-    << : *default-odoo
-    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,reload,qweb,werkzeug,xml']
-    command: []
+    << : *add-additional-volumes
   tests:
-    << : *default-odoo
-    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,qweb,werkzeug,xml', '--test-enable', '--stop-after-init', '--logfile', '/testlogs/']
-    command: []
-  scaffold:
-    << : *default-odoo
-    user: "${COMPOSE_IMPERSONATION}"
-    entrypoint: ['/entrypoint.sh', 'scaffold']
-    command: []
+    << : *add-additional-volumes
   shell:
-    << : *default-odoo
-    entrypoint: ['/entrypoint.sh', 'shell']
-    command: []
-  # Auxiliar & setup "commands"
-  view-patches:
-    image: "${IMAGE}:${ODOO_VERSION}"
-    entrypoint: []
-    command: ['cat', '/patches']
-  patches:
-    image: "${IMAGE}:${ODOO_VERSION}"
-    user: "${COMPOSE_IMPERSONATION}"
-    volumes:
-      - ./vendor/odoo/cc:/mnt/cc-host-folder
-    entrypoint: []
-    command: ['/patches', '/mnt/cc-host-folder']
+    << : *add-additional-volumes
+  # migrate:
+  #   << : *add-additional-volumes
+  # initdb:
+  #   << : *add-additional-volumes
+  # load:
+  #   << : *add-additional-volumes
+  # translate:
+  #   << : *add-additional-volumes

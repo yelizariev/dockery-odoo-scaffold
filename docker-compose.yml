@@ -1,56 +1,143 @@
 version: '3.4'
+
+
+x-odoo:
+  &default-odoo
+  tty: true  # Do not avoid json logging
+  build:
+    image: "${IMAGE}:${ODOO_VERSION}-dev"
+    context: "${FROMREPO}#master:images/dev"
+    ports: ['80:8069', '8072:8072']
+  volumes:
+  # Named Data volumes
+  - odoo-data:/var/lib/odoo-persist
+  - odoo-backup:/var/lib/odoo-backup
+  - odoo-testlogs:/var/lib/odoo-testlogs
+  # Host paths (config)
+  - .cfg-default.ini:/opt/odoo/.odoorc.d/01-default:ro
+  - .cfg-custom.ini:/opt/odoo/.odoorc.d/02-custom:ro
+  # Host paths (source)
+  - ./src:/opt/odoo/addons/090
+  - ./vendor/odoo/cc/odoo:/opt/odoo/odoo:ro
+  - ./vendor/odoo/cc/addons:/opt/odoo/addons/000:ro
+  - ./vendor/odoo/ee:/opt/odoo/addons/001:ro
+
 secrets:
   adminpwd:
-    external: true
-  pgpass:
-    external: true
+    file: .adminpwd
+
 volumes:
-  odoo-data:
-    external: true
-  psql:
-    external: true
+  odoo-data: {driver: local}
+  odoo-backup: {driver: local}
+  odoo-testlogs: {driver: local}
+  psql: {driver: local}
+
 services:
-  odoo:
-    image: "${IMAGE}:${ODOO_VERSION}"
-    build:
-      args:
-        FROM_IMAGE: "${FROM}:${ODOO_VERSION}"
-      context: .
-    volumes:
-      - odoo-data:/var/lib/odoo
-    depends_on: ['db-node']
-    secrets:
-      - source: adminpwd
-        target: /run/secrets/adminpwd
-        uid:    "9001"
-        gid:    "9001"
-        mode:   0400
-      - source: pgpass
-        target: /run/secrets/pgpass
-        uid:    "9001"
-        gid:    "9001"
-        mode:   0400
-    configs:
-      - source: odoo-base
-        target: /opt/odoo/.odoorc.d/odoo-base
-      - source: odoo-logging
-        target: /opt/odoo/.odoorc.d/odoo-logging
-      - source: odoo-mutiproc
-        target: /opt/odoo/.odoorc.d/odoo-mutiproc
-      - source: odoo-smtp
-        target: /opt/odoo/.odoorc.d/odoo-smtp
-  db-node:
-    image: '${FROM}:postgres'
+
+# ========================
+
+  wdb:
+    image: xoes/wdb-server
+    ports: ['1984:1984']
+
+# ------------------------
+
+  postgres:
+    image: 'postgresql'
     volumes: ['psql:/var/lib/postgresql/data']
     environment:
-      - APP_PGPASS_FILE=/run/secrets/pgpass
-    secrets:
-      - source: pgpass
-        target: /run/secrets/pgpass
-        uid:    "70"
-        gid:    "70"
-        mode:   0400
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
     networks:
       default:
         aliases:
          - db
+
+# ------------------------
+
+  odoo:
+    << : *default-odoo
+    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,reload,qweb,werkzeug,xml']
+    command: []
+    build:
+      args:
+        FROM_IMAGE: "${FROM}:${ODOO_VERSION}"
+      context: .
+    depends_on: ['postgres', 'wdb']
+    secrets:
+      - source: adminpwd
+        target: /run/secrets/adminpwd
+
+# ========================
+
+  scaffold:
+    << : *default-odoo
+    user: "${COMPOSE_IMPERSONATION}"
+    entrypoint: ['/entrypoint.sh', 'scaffold']
+    command: []
+
+# ------------------------
+
+  tests:
+    << : *default-odoo
+    depends_on: ['postgres', 'wdb']
+    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,qweb,werkzeug,xml', '--test-enable', '--stop-after-init', '--logfile', '/testlogs/']
+    command: []
+
+# ------------------------
+
+  shell:
+    << : *default-odoo
+    depends_on: ['postgres', 'wdb']
+    entrypoint: ['/entrypoint.sh', 'shell']
+    command: []
+
+# ------------------------
+
+  # migrate:
+  #   << : *default-odoo
+  #   depends_on: ['postgres', 'wdb']
+  #   entrypoint: ['/entrypoint.sh', 'migrate']
+  #   command: []
+
+# ------------------------
+
+  # initdb:
+  #   << : *default-odoo
+  #   depends_on: ['postgres', 'wdb']
+  #   entrypoint: ['/entrypoint.sh', 'initdb']
+  #   command: []
+
+# ------------------------
+
+  # load:
+  #   << : *default-odoo
+  #   depends_on: ['postgres', 'wdb']
+  #   entrypoint: ['/entrypoint.sh', 'loader']
+  #   command: []
+
+# ------------------------
+
+  # translate:
+  #   << : *default-odoo
+  #   depends_on: ['postgres', 'wdb']
+  #   entrypoint: ['/entrypoint.sh', 'translate']
+  #   command: []
+
+# ------------------------
+# TODO: move to Makefile
+
+  view-patches:
+    image: "${IMAGE}:${ODOO_VERSION}"
+    entrypoint: []
+    command: ['cat', '/patches']
+
+# ------------------------
+
+  patches:
+    image: "${IMAGE}:${ODOO_VERSION}"
+    user: "${COMPOSE_IMPERSONATION}"
+    volumes:
+      - ./vendor/odoo/cc:/mnt/cc-host-folder
+    entrypoint: []
+    command: ['/patches', '/mnt/cc-host-folder']
