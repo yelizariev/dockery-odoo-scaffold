@@ -13,7 +13,7 @@ echo -e "\t${GREEN}- Odoo Enterprise Code (if configured)${NC}"
 echo -e "\t${GREEN}- Vendored modules${NC}"
 echo -e "\t${GREEN}- Your project modules (\`src\` folder)${NC}"
 echo -e "\t${GREEN}- Your further customizations from the Dockerfile${NC}\n"
-docker build --tag "${IMAGE}:${ODOO_VERSION}" --arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}" "${DIR}/../."
+docker build --tag "${IMAGE}:${ODOO_VERSION}" --args "FROM_IMAGE=${FROM}:${ODOO_VERSION}" "${DIR}/../."
 
 echo -e "\n${RED}Now we build the allrounder image atop the production image.\n"
 echo -e "\t${GREEN}- Complements additional tools for local dev${NC}"

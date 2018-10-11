@@ -7,7 +7,7 @@ x-odoo:
   build:
     image: "${IMAGE}:${ODOO_VERSION}-dev"
     context: "${FROMREPO}#master:images/dev"
-    ports: ['80:8069', '8072:8072']
+  ports: ['80:8069', '8072:8072']
   volumes:
   # Named Data volumes
   - odoo-data:/var/lib/odoo-persist
