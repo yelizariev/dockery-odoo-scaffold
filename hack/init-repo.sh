@@ -74,3 +74,5 @@ else
 	echo "export COMPOSE_IMPERSONATION='$(id -u):$(id -g)'" > ~/.bashrc
 	export COMPOSE_IMPERSONATION="$(id -u):$(id -g)"
 fi
+
+echo -e "Next, run: \`make create\`"
