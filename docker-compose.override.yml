@@ -6,7 +6,8 @@ x-odoo-code-volumes:
   # Get test results out of the container
   - ./_testlogs:/testlogs
   # Development config (odoo)
-  - ./cfg:/opt/odoo/.odoorc.d:ro
+  - .cfg-default.ini:/opt/odoo/.odoorc.d/01-default:ro
+  - .cfg-custom.ini:/opt/odoo/.odoorc.d/02-custom:ro
   # Project code
   - ./src:/opt/odoo/addons/090
   # Vendored Code
