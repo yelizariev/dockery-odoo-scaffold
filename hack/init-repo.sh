@@ -30,7 +30,7 @@ options=("yes" "no")
 select opt in "${options[@]}"; do
 	case "$REPLY" in
 		1 ) echo -e "Copy one repo per line. \n They must contain a ${version} branch.\n Finalize with CTRL+D\n"
-			repos=$(</dev/stdin)
+			repos=($(</dev/stdin))
 			for i in "${!repos[@]}"; do
 				url="${repos[$i]}"
 				org=$(basename "$(dirname "${url}")")
