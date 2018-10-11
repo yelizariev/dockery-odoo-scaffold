@@ -9,11 +9,12 @@ init: chmod-scripts
 
 create: pull-base build
 
+pull-base: chmod-scripts
+	env $(ENV) hack/pull-image.sh
+
 build: chmod-scripts
 	env $(ENV) hack/build-images.sh
 
-pull-base:
-    env $(ENV) docker pull "${FROM}:${ODOO_VERSION}"
 
 patch: chmod-scripts
 	env $(ENV) hack/apply-patches.sh
