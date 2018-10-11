@@ -7,12 +7,12 @@ init: chmod-scripts
 	editor .env
 	editor Dockerfile
 
-create: pull build
+create: pull-base build
 
 build: chmod-scripts
 	env $(ENV) hack/build-images.sh
 
-pull:
+pull-base:
     env $(ENV) docker pull "${FROM}:${ODOO_VERSION}"
 
 patch: chmod-scripts

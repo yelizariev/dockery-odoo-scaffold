@@ -4,9 +4,7 @@ version: '3.4'
 x-odoo:
   &default-odoo
   tty: true  # Do not avoid json logging
-  build:
-    image: "${IMAGE}:${ODOO_VERSION}-dev"
-    context: "${FROMREPO}#master:images/dev"
+  image: "${IMAGE}:${ODOO_VERSION}-dev"
   ports: ['80:8069', '8072:8072']
   volumes:
   # Named Data volumes
@@ -61,8 +59,8 @@ services:
     command: []
     build:
       args:
-        FROM_IMAGE: "${FROM}:${ODOO_VERSION}"
-      context: .
+        FROM_IMAGE: "${IMAGE}:${ODOO_VERSION}"
+      context: "${FROMREPO}#master:images/dev"
     depends_on: ['postgres', 'wdb']
     secrets:
       - source: adminpwd

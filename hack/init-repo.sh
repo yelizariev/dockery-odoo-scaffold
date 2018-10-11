@@ -65,3 +65,10 @@ sed -i "s/{{ ENTERPRISE }}/${enterprise}/" Dockerfile .env
 # Git commit
 git add .
 git commit -m "Customize Project"
+
+if grep -Fxq "export COMPOSE_IMPERSONATION='$(id -u):$(id -g)'" ~/.bashrc; then
+	true
+else
+	echo "export COMPOSE_IMPERSONATION='$(id -u):$(id -g)'" > ~/.bashrc
+	export COMPOSE_IMPERSONATION="$(id -u):$(id -g)"
+fi
