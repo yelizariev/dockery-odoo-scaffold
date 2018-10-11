@@ -15,7 +15,7 @@ x-odoo:
   - .cfg-default.ini:/opt/odoo/.odoorc.d/01-default:ro
   - .cfg-custom.ini:/opt/odoo/.odoorc.d/02-custom:ro
   # Host paths (source)
-  - ./src:/opt/odoo/addons/090
+  - ./src:/opt/odoo/addons/090:ro
   - ./vendor/odoo/cc/odoo:/opt/odoo/odoo:ro
   - ./vendor/odoo/cc/addons:/opt/odoo/addons/000:ro
   - ./vendor/odoo/ee:/opt/odoo/addons/001:ro
@@ -73,6 +73,8 @@ services:
     user: "${COMPOSE_IMPERSONATION}"
     entrypoint: ['/entrypoint.sh', 'scaffold']
     command: []
+    volumes:
+    - ./src:/opt/odoo/addons/090
 
 # ------------------------
 
