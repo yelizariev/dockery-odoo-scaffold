@@ -20,7 +20,7 @@ echo -e "\t${GREEN}- Provides Odoo Server API extensions for DevOps.${NC}"
 echo -e "\t${GREEN}- Remote build context maintained by XOE.${NC}"
 echo -e "\t${GREEN}- Therefore, as devops image evolves, just rebuild.${NC}"
 echo -e "\t${GREEN}- For details, visit: https://git.io/fA9xc${NC}\n"
-docker-compose build odoo
+docker build --tag "${IMAGE}:${ODOO_VERSION}-dev" --build-arg "FROM_IMAGE=${IMAGE}:${ODOO_VERSION}" "${FROMREPO}#master:images/dev"
 
 echo -e "\n${RED}First time? Next, do:${NC}\n"
 echo -e "\t${GREEN}- apply patches to your local workdir: \`make patch\`;${NC}"

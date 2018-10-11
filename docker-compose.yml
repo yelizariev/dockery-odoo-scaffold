@@ -57,10 +57,6 @@ services:
     << : *default-odoo
     entrypoint: ['/entrypoint.sh', '--dev', 'wdb,reload,qweb,werkzeug,xml']
     command: []
-    build:
-      args:
-        FROM_IMAGE: "${IMAGE}:${ODOO_VERSION}"
-      context: "${FROMREPO}#master:images/dev"
     depends_on: ['postgres', 'wdb']
     secrets:
       - source: adminpwd
