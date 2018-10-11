@@ -53,7 +53,7 @@ git submodule add -b "${version}" git@github.com:odoo/odoo.git vendor/odoo/cc
 if [ "${enterprise}" = "yes" ]; then
 	git submodule add -b "${version}" git@github.com:odoo/enterprise.git vendor/odoo/ee
 else
-	makedir -p vendor/odoo/ee
+	mkdir -p vendor/odoo/ee
 	touch vendor/odoo/ee/.gitkeep
 fi
 
