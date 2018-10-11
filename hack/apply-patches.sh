@@ -12,5 +12,6 @@ source <(docker run --entrypoint= "${FROM}:${ODOO_VERSION}" cat /patches)
 PREV_PWD=$(pwd)
 cd "${DIR}/../vendor/odoo/cc/"
 git stash push --keep-index --include-untracked --message "Patches for ${ODOO_VERSION}"
+git stash apply stash@{0}
 echo -e "Patches stashed as: 'Patches for ${ODOO_VERSION}'"
 cd ${PREV_PWD}
