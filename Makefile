@@ -15,6 +15,9 @@ build: chmod-scripts
 pull:
     env $(ENV) docker pull "${FROM}:${ODOO_VERSION}"
 
+patch: chmod-scripts
+	env $(ENV) hack/apply-patches.sh
+
 chmod-scripts:
 	chmod +x -R hack
 

@@ -123,21 +123,3 @@ services:
   #   depends_on: ['postgres', 'wdb']
   #   entrypoint: ['/entrypoint.sh', 'translate']
   #   command: []
-
-# ------------------------
-# TODO: move to Makefile
-
-  view-patches:
-    image: "${IMAGE}:${ODOO_VERSION}"
-    entrypoint: []
-    command: ['cat', '/patches']
-
-# ------------------------
-
-  patches:
-    image: "${IMAGE}:${ODOO_VERSION}"
-    user: "${COMPOSE_IMPERSONATION}"
-    volumes:
-      - ./vendor/odoo/cc:/mnt/cc-host-folder
-    entrypoint: []
-    command: ['/patches', '/mnt/cc-host-folder']
