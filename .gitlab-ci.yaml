@@ -29,7 +29,7 @@ Update-Project-Image:
   except: ['/^HOTFIX-.*$/']
   script:
     - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
-    - ./scripts/ci-build-main.sh
+    - ci-build-main.sh
 
 Update-Tester:
   stage: Build
@@ -40,7 +40,7 @@ Update-Tester:
   except: ['/^HOTFIX-.*$/']
   script:
     - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
-    - ./scripts/ci-build-helper.sh tester
+    - ci-build-helper.sh tester
 
 Update-Migrator:
   stage: Build
@@ -50,7 +50,7 @@ Update-Migrator:
   tags: [image-builder]
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - ./scripts/ci-build-helper.sh migrator
+    - ci-build-helper.sh migrator
 
 Test-Diff:
   # Make sure $CI_REGISTRY_IMAGE is the same as $IMAGE
@@ -110,7 +110,7 @@ Release-Project-Image:
   allow_failure: false
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - ./scripts/ci-build-main.sh "${CI_COMMIT_TAG}"
+    - ci-build-main.sh "${CI_COMMIT_TAG}"
   environment: production
 
 # CI GIT & Component Configuration
