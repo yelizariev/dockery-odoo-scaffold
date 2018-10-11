@@ -41,7 +41,7 @@ services:
 # ------------------------
 
   postgres:
-    image: 'postgresql'
+    image: 'postgres:alpine'
     volumes: ['psql:/var/lib/postgresql/data']
     environment:
       - POSTGRES_USER=odoo
