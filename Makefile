@@ -19,6 +19,10 @@ build: chmod-scripts
 patch: chmod-scripts
 	env $(ENV) hack/apply-patches.sh
 
+
+faq:
+	cat hack/faq.txt
+
 chmod-scripts:
 	chmod +x -R hack
 

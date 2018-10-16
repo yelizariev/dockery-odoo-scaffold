@@ -1,0 +1,19 @@
+FAQ
+
+Q: How to add a dependency once everything is already build:
+
+A: Using https://github.com/OCA/web.git as an example, there are two options:
+
+1) start again from "make init"
+
+2) a) `git submodule add https://github.com/OCA/web.git vendor/OCA/web`
+   b) Edit Dockerfile by adding after the line
+   	  "## NOTE: later *modules* override their previous namesake"
+   	  a new line with:
+      `COPY --chown=odoo:odoo vendor/OCA/web/* /opt/odoo/addons/011/`
+   c) Edit docker-compose.override.yaml by placing after te line
+      "# Put additional volumes here":
+      `- ./vendor/OCA/web:/opt/odoo/addons/011:ro`
+      Remove "{{ VOLUMES }}"" placeholder, if it should be still there.
+   d) And finally do again: `docker-compose up odoo`
+   e) Optionally, you also can rebuild the images, right now: `make build`
