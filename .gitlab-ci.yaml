@@ -18,7 +18,7 @@ before_script:
 - etcdctl version
 # Set the repo's environment
 - export $(egrep -v '^#' .env | xargs)
-- chmod -R +x ./scripts
+- chmod -R +x ./hack
 
 Update-Project-Image:
   stage: Pre-Build
