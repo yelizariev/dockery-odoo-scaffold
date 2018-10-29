@@ -6,6 +6,9 @@ x-odoo:
   tty: true  # Do not avoid json logging
   image: "${IMAGE}:devops-${ODOO_VERSION}"
   ports: ['80:8069', '8072:8072']
+  secrets:
+    - source: adminpwd
+      target: /run/secrets/adminpwd
   volumes:
   # Named Data volumes
   - odoo-data:/var/lib/odoo-persist
@@ -58,9 +61,6 @@ services:
     entrypoint: ['/entrypoint.sh', '--dev', 'wdb,reload,qweb,werkzeug,xml']
     command: []
     depends_on: ['postgres', 'wdb']
-    secrets:
-      - source: adminpwd
-        target: /run/secrets/adminpwd
 
 # ========================
 
