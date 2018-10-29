@@ -1,0 +1,28 @@
+--- !Migration
+version: 0.0.1
+app_version: 10.0
+upgrade:
+- account
+install:
+- document
+uninstall:
+- project
+remove:  # Only supported since Odoo 10.0
+- removed_code
+
+--- !Migration
+version: 0.0.2  # nothing to do
+app_version: 10.0
+
+--- !Migration
+version: 0.9.9  # prepare for migration service
+app_version: 10.0
+upgrade:
+- document
+
+--- !Migration
+version: 1.0.0  # Versioning is continous and independend from Odoo version
+app_version: 11.0
+service: 'odoo'  # ['odoo'|'oca'] Migration provider
+upgrade:  # Executed after migration service
+- document
