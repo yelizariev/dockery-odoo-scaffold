@@ -75,4 +75,13 @@ else
 	export COMPOSE_IMPERSONATION="$(id -u):$(id -g)"
 fi
 
+if [ ! $(which pre-commit) ]; then
+	echo -e "${RED}We install a bunch of pre-commit.com hooks"
+	echo -e  "to help you produce better code ...\n${NC}"
+	sudo -k -H pip install pre-commit
+	pre-commit install
+else
+	pre-commit install
+fi
+
 echo -e "Next, run: \`make create\`"
