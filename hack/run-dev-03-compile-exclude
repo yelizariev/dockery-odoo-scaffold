@@ -1,8 +1,0 @@
-*-NOPR-add-json-logging-on-non-tty
-*-NOPR-bind-mount-adminpwd-secret
-*-NOPR-support-config-folder
-*-NOPR-add-cli-dialogue-to-scaffolding
-*-db-set-user-timezone-to-country
-*-fix-chrome-in-container-environment
-*-add-json-option-to-scaffold
-*-configurable-templates-dir
