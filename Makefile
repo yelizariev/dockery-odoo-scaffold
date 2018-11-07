@@ -25,4 +25,3 @@ faq:
 
 chmod-scripts:
 	chmod +x -R hack
-

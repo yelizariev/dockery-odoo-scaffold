@@ -7,12 +7,12 @@
 
 # Prerequisite: for odoo into your organization, set this as `dev` remote
 
-folders=("vendor/odoo/cc/.git" "vendor/odoo/ee/.git")
+repos=("cc" "ee")
 branches=("master" "11.0")
 owndev="dev"
 
-
-for folder in "${folders[@]}"; do
+for repo in "${repos[@]}"; do
+    folder="vendor/odoo/${repo}/.git"
     echo -e "\n\nFetching ${folder}\n"
     gitcmd="git --git-dir ${folder}"
     eval "${gitcmd} fetch --all --prune"
