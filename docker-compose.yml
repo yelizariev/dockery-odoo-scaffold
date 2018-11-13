@@ -45,6 +45,8 @@ services:
 
   postgres:
     image: 'postgres:alpine'
+    # 5432 might be taken by a locally running instance
+    ports: ['5433:5432']
     volumes: ['psql:/var/lib/postgresql/data']
     environment:
       - POSTGRES_USER=odoo
