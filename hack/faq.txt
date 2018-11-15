@@ -17,3 +17,21 @@ A: Using https://github.com/OCA/web.git as an example, there are two options:
       Remove "{{ VOLUMES }}"" placeholder, if it should be still there.
    d) And finally do again: `docker-compose up odoo`
    e) Optionally, you also can rebuild the images, right now: `make build`
+
+
+
+Q: I get a database connection error (or something similar) when
+   refreshing / loading the page, what am I doing wrong?
+
+A: Usal suspects:
+
+1) Have you applied patches of respective version in your vendor/odoo/cc workdir?
+   `git submodule update && make patch` - make sure submodule supdate cleanly.
+   Alternatively: `cd vendor/odoo/cc git stash` and apply the corresponding
+   existing stash, if already created by `make patch`.
+2) Is there a new postgres version running (postgres service won't even start)?
+   Just delete the postgres docker volume see `docker volume ls`
+3) After a version branch change: Have you run `git submodule update`?
+   (run `git subdmodule foreach git checkout -- .` to cleanup all submodules)
+4) After a version branch change: Does you current session imply direct access
+   to an incopatible (version!) data base? (clear cookies + cache)
