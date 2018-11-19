@@ -51,6 +51,7 @@ services:
     environment:
       - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=odoo
+      - POSTGRES_DB=postgres
     networks:
       default:
         aliases:
