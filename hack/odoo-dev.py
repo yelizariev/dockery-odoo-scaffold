@@ -71,7 +71,7 @@ class Git(object):
 
     def _continue_or_abort(self, op):
         if click.confirm("Continue (or abort)?"):
-            if self.run([op, "--contine"]) is None:
+            if self.run([op, "--continue"]) is None:
                 return self._continue_or_abort(op)
             return True
         else:
@@ -86,8 +86,8 @@ class Git(object):
         if res is None:
             click.get_current_context().fail("Checkout failed. Aborting for security.")
 
-    def rebase(self, branch):
-        if self.run(["rebase", branch]) is None:
+    def rebase(self, branch, base_branch):
+        if self.run(["rebase", base_branch, branch]) is None:
             click.echo("After resolving rebase conflicts manually:")
             return self._continue_or_abort("rebase")
         else:
@@ -151,7 +151,7 @@ class Git(object):
                 click.secho("REBASE: %s - Rebasing branch ..." % candidate, fg="cyan")
                 staging_name = self._get_staging_name(candidate)
                 self.checkout(candidate, staging_name)
-                if self.rebase(candidate):
+                if self.rebase(staging_name, base_branch):
                     click.secho("REBASE: %s - Pushing ..." % candidate, fg="cyan")
                     self.run(["push", "-f", self.remote])
                 self.checkout(base_branch)
