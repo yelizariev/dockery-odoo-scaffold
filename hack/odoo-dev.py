@@ -93,12 +93,23 @@ class Git(object):
         else:
             return True
 
+    def cherry_pick(self, commits):
+        if self.run(["cherry-pick"] + commits) is None:
+            click.echo("After resolving cherry-pick conflicts manually:")
+            return self._continue_or_abort("cherry-pick")
+        else:
+            return True
+
     def merge(self, branch):
         if self.run(["merge", "--no-ff", branch]) is None:
             click.echo("After resolving merge conflicts manually:")
             return self._continue_or_abort("merge")
         else:
             return True
+
+    def cherry(self, origin, target):
+        res = self.run(["cherry", target, origin])
+        return res.replace("+ ", "").split("\n")
 
     def _get_staging_name(self, sstr):
         prefix = self.remote + "/"
@@ -157,6 +168,43 @@ class Git(object):
                 self.checkout(base_branch)
                 self.run(["branch", "-D", staging_name])
 
+    def _backport_name(self, candidate, origin, target):
+        return candidate.replace(origin, target)
+
+    def backport_patches(self):
+        click.secho("BACKPORT: Backporting patch branches ...", bg="cyan", fg="white")
+
+        series = sorted(self.branches)
+        while len(series) >= 2:
+            remote_branches = self._get_remote_branches()
+            from_series = series.pop()
+            to_series = series[-1]
+            to_backport = []
+            for br in remote_branches:
+                if self._is_patch(br, from_series):
+                    to_backport.append(br)
+
+            for backport in to_backport:
+                click.secho(
+                    "BACKPORT: %s - Backporting branch ..." % backport, fg="cyan"
+                )
+                commits = self.cherry(backport, from_series)
+                staging_name = self._get_staging_name(backport)
+                remote_backport_name = self._backport_name(
+                    backport, from_series, to_series
+                )
+                staging_backport_name = self._backport_name(
+                    staging_name, from_series, to_series
+                )
+                self.checkout(to_series, staging_backport_name)
+                if self.cherry_pick(commits):
+                    click.secho(
+                        "BACKPORT: %s - Pushing ..." % remote_backport_name, fg="cyan"
+                    )
+                    self.run(["push", "-f", "-u", self.remote, staging_backport_name])
+                self.checkout(to_series)
+                self.run(["branch", "-D", staging_backport_name])
+
     def compile(self):
         click.secho(
             "COMPILE: Compiling syntetic patch branches ...", bg="blue", fg="white"
@@ -193,6 +241,7 @@ class Git(object):
 @click.option("--remote", default="dev", help="Name of odoo-dev remote.")
 @click.option("--update/--no-update", "-u", default=False, help="Update remote repo.")
 @click.option("--rebase/--no-rebase", "-r", default=False, help="Rebase patches.")
+@click.option("--backport/--no-backport", "-b", default=False, help="Backport patches.")
 @click.option(
     "--compile/--no-compile",
     "-c",
@@ -204,7 +253,7 @@ class Git(object):
     "--auto/--no-auto", default=False, help="Shorthand for update, rebase, compile."
 )
 @click.argument("branches", nargs=-1, required=True)
-def main(git_dir, remote, update, rebase, compile_branch, auto, branches):
+def main(git_dir, remote, update, rebase, backport, compile_branch, auto, branches):
     """ Run git commands for custom odoo-dev.
     """
     git = Git(git_dir, remote, branches)
@@ -212,6 +261,8 @@ def main(git_dir, remote, update, rebase, compile_branch, auto, branches):
         git.update_remote()
     if rebase or auto:
         git.rebase_patches()
+    if backport or auto:
+        git.backport_patches()
     if compile_branch or auto:
         git.compile()
 
