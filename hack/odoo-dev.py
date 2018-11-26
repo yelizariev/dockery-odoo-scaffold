@@ -30,6 +30,7 @@ from future import standard_library
 standard_library.install_aliases()
 
 
+BACKPORT_FLAG = "-BACKPORT-"
 BASE_BRANCHES = ["6.0", "6.1", "7.0", "8.0", "9.0", "10.0", "11.0", "12.0", "master"]
 PATCH_PREFIX = "{}/{}-".format
 PATCH_FORMAT = "{}/{}-{}".format
@@ -45,13 +46,18 @@ class Git(object):
     def __exit__(self, exception_type, exception_value, traceback):
         self.run(["checkout", self.head])
 
-    def __init__(self, git_dir, remote, branches):
+    def __init__(self, git_dir, remote, branches=None):
         self.git_dir = git_dir
         self.remote = remote
-        self.branches = branches
+        self.branches = branches or []
         self.head = None
         click.echo("==> Git-Dir: %s" % self.git_dir)
         click.echo("==> Remote: %s" % self.remote)
+        if self.branches:
+            click.echo("==> Base-Branche(s): %s" % ",".join(self.branches))
+
+    def _add_branches(self, branches):
+        self.branches = self.branches + branches
         click.echo("==> Base-Branche(s): %s" % ",".join(self.branches))
 
     def run(self, command):
@@ -169,7 +175,7 @@ class Git(object):
                 self.run(["branch", "-D", staging_name])
 
     def _backport_name(self, candidate, origin, target):
-        return candidate.replace(origin, target)
+        return candidate.replace(origin, target + BACKPORT_FLAG)
 
     def backport_patches(self):
         click.secho("BACKPORT: Backporting patch branches ...", bg="cyan", fg="white")
@@ -205,6 +211,19 @@ class Git(object):
                 self.checkout(to_series)
                 self.run(["branch", "-D", staging_backport_name])
 
+    def backport_patch(self, commits, to_series, staging_backport_name):
+        self.checkout(to_series, staging_backport_name)
+        if self.cherry_pick(commits):
+            click.secho(
+                "BACKPORT: {}/{} - Pushing ...".format(
+                    self.remote, staging_backport_name
+                ),
+                fg="cyan",
+            )
+            self.run(["push", "-f", "-u", self.remote, staging_backport_name])
+        self.checkout(to_series)
+        self.run(["branch", "-D", staging_backport_name])
+
     def compile(self):
         click.secho(
             "COMPILE: Compiling syntetic patch branches ...", bg="blue", fg="white"
@@ -236,9 +255,19 @@ class Git(object):
         return res
 
 
-@click.command()
+@click.group()
 @click.option("--git-dir", default="vendor/odoo/cc/.git", help="Local Repo Git-Dir.")
 @click.option("--remote", default="dev", help="Name of odoo-dev remote.")
+@click.pass_context
+def main(ctx, git_dir, remote):
+    """ Run git commands for custom odoo-dev.
+    """
+    ctx.ensure_object(dict)
+
+    ctx.obj["GIT"] = Git(git_dir, remote)
+
+
+@main.command()
 @click.option("--update/--no-update", "-u", default=False, help="Update remote repo.")
 @click.option("--rebase/--no-rebase", "-r", default=False, help="Rebase patches.")
 @click.option("--backport/--no-backport", "-b", default=False, help="Backport patches.")
@@ -253,10 +282,11 @@ class Git(object):
     "--auto/--no-auto", default=False, help="Shorthand for update, rebase, compile."
 )
 @click.argument("branches", nargs=-1, required=True)
-def main(git_dir, remote, update, rebase, backport, compile_branch, auto, branches):
-    """ Run git commands for custom odoo-dev.
-    """
-    git = Git(git_dir, remote, branches)
+@click.pass_context
+def maintain(ctx, update, rebase, backport, compile_branch, auto, branches):
+    git = ctx.obj["GIT"]
+    git._add_branches(list(branches))
+
     if update or auto:
         git.update_remote()
     if rebase or auto:
@@ -265,6 +295,17 @@ def main(git_dir, remote, update, rebase, backport, compile_branch, auto, branch
         git.backport_patches()
     if compile_branch or auto:
         git.compile()
+
+
+@main.command()
+@click.argument("commit", required=True)
+@click.argument("target", required=True)
+@click.argument("name", required=True)
+@click.pass_context
+def backport(ctx, commit, target, name):
+    git = ctx.obj["GIT"]
+    name = target + BACKPORT_FLAG + name
+    git.backport_patch([commit], target, name)
 
 
 if __name__ == "__main__":
