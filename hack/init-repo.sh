@@ -72,7 +72,7 @@ if grep -Fxq "export COMPOSE_IMPERSONATION='$(id -u):$(id -g)'" ~/.bashrc; then
 	true
 else
 	echo "export COMPOSE_IMPERSONATION='$(id -u):$(id -g)'" >> ~/.bashrc
-	export COMPOSE_IMPERSONATION="$(id -u):$(id -g)"
+	echo "export COMPOSE_IMPERSONATION=$(id -u):$(id -g)"
 fi
 
 if [ ! $(which pre-commit) ]; then
