@@ -62,6 +62,7 @@ before_script:
 - export $(egrep -v '^#' .env | xargs)
 - devopsimage="${IMAGE}:devops-${ODOO_VERSION}-${CI_PIPELINE_IID}"
 - echo "${CUSTOM_CONFIG}" > .cfg-custom.ini
+- cfg_mount="$(pwd)/.cfg-custom.ini:/opt/odoo/cfg.d/02-custom:ro"
 
 Build-Twins:
   stage: Build
@@ -88,11 +89,7 @@ Test-Diff:
     # Modules configuration
     INCLUDE: YOUR_INTEGRATION_TEST_MODULE
   script:
-    - |
-        docker run \
-            -v $(pwd)/.cfg-custom.ini:/opt/odoo/cfg.d/02-custom:ro \
-            -ti "${devopsimage}" dodoo-tester \
-                -i $INCLUDE
+    - docker run -v "${cfg_mount}" "${devopsimage}" dodoo-tester -i $INCLUDE
 
 Migrate-Staged-DBs:
   only: [tags]
@@ -103,11 +100,7 @@ Migrate-Staged-DBs:
   script:
     - |
         for db in ${STAGED_DBS}; do
-            docker run \
-              -v $(pwd)/.cfg-custom.ini:/opt/odoo/cfg.d/02-custom:ro \
-              -ti "${devopsimage}" dodoo-migrator \
-                -f ./.migration.yml \
-                -d "${db}"
+            docker run -v "${cfg_mount}" "${devopsimage}" dodoo-migrator -f ./.migration.yml -d "${db}"
         done
 
 Release:
