@@ -63,6 +63,7 @@ before_script:
 - devopsimage="${IMAGE}:devops-${ODOO_VERSION}-${CI_PIPELINE_IID}"
 - echo "${CUSTOM_CONFIG}" > .cfg-custom.ini
 - cfg_mount="$(pwd)/.cfg-custom.ini:/opt/odoo/cfg.d/02-custom:ro"
+- docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
 
 Build-Twins:
   stage: Build
@@ -70,13 +71,13 @@ Build-Twins:
   tags: [image-builder]
   except: ['/^HOTFIX-.*$/']
   script:
-    - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
     - ci-build.sh base ${CI_PIPELINE_IID}
     - ci-build.sh devops ${CI_PIPELINE_IID}
 
 Test-Diff:
   only: [branches]
   except: ['/^HOTFIX-.*$/']
+  tags: [image-builder]
   stage: Test
   services:
   - postgres:latest
@@ -93,6 +94,7 @@ Test-Diff:
 
 Migrate-Staged-DBs:
   only: [tags]
+  tags: [image-builder]
   stage: Stage
   variables:
     GIT_STRATEGY: none
