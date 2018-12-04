@@ -82,6 +82,9 @@ Test-Diff:
   services:
   - postgres:latest
   variables:
+    # We only need git to validate changed modules,
+    # we can't introspect submodules anyway
+    GIT_SUBMODULE_STRATEGY: 'none'
     # You can alternatively use an external db connection:
     # Use the CUSTOM_CONFIG variable
     POSTGRES_DB: odoo
