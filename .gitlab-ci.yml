@@ -63,6 +63,7 @@ before_script:
 - devopsimage="${IMAGE}:devops-${ODOO_VERSION}-${CI_PIPELINE_IID}"
 - echo "${CUSTOM_CONFIG}" > .cfg-custom.ini
 - cfg_mount="$(pwd)/.cfg-custom.ini:/opt/odoo/cfg.d/02-custom:ro"
+- git_mount="$(pwd)/.git:/mnt"
 - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
 
 Build-Twins:
@@ -93,7 +94,14 @@ Test-Diff:
     # Modules configuration
     INCLUDE: YOUR_INTEGRATION_TEST_MODULE
   script:
-    - docker run -v "${cfg_mount}" "${devopsimage}" dodoo-tester -d OdooTestDB -i $INCLUDE
+    - |
+      docker run \
+        -v "${cfg_mount}" \
+        -v "${git_mount}" \
+        "${devopsimage}" dodoo-tester \
+          -d OdooTest \
+          --git-dir /mnt/.git "origin/${ODOO_VERSION}" \
+          -i ${INCLUDE}
 
 Migrate-Staged-DBs:
   only: [tags]
