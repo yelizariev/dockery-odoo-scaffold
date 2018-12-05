@@ -62,8 +62,8 @@ before_script:
 - export $(egrep -v '^#' .env | xargs)
 - devopsimage="${IMAGE}:devops-${ODOO_VERSION}-${CI_PIPELINE_IID}"
 - echo "${CUSTOM_CONFIG}" > .cfg-custom-ci.ini
-- cfg_mount="$(pwd)/.cfg-custom-ci.ini:/opt/odoo/cfg.d/02-custom:ro"
-- git_mount="$(pwd)/.git:/mnt"
+- cfg_mount="${CI_PROJECT_DIR}/.cfg-custom-ci.ini:/opt/odoo/cfg.d/02-custom:ro"
+- git_mount="${CI_PROJECT_DIR}/.git:/mnt/.git"
 - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
 - pwd  # Orientation
 - ls -la  # Orientation
