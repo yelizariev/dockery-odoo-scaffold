@@ -45,7 +45,7 @@ variables:
   DOCKER_DRIVER: overlay2
   CUSTOM_CONFIG: |
     [options]
-    db_host = db
+    db_host = postgres
     db_port = 5432
     db_user = odoo
     db_password = odoo
@@ -93,7 +93,7 @@ Test-Diff:
     GIT_SUBMODULE_STRATEGY: 'none'
     # You can alternatively use an external db connection:
     # Use the CUSTOM_CONFIG variable
-    POSTGRES_DB: odoo
+    POSTGRES_DB: postgres
     POSTGRES_USER: odoo
     POSTGRES_PASSWORD: ""
     # Modules configuration
