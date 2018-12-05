@@ -94,6 +94,7 @@ Test-Diff:
     # Modules configuration
     INCLUDE: YOUR_INTEGRATION_TEST_MODULE
   script:
+    - docker pull "${devopsimage}" &> /dev/null  # Mute eventual image pull
     - |
       docker run \
         -v "${cfg_mount}" \
@@ -111,6 +112,7 @@ Migrate-Staged-DBs:
     GIT_STRATEGY: none
     STAGED_DBS: "SPACE SEPARATED LIST OF EXISTING DBS TO STAGE MIGRATION"
   script:
+    - docker pull "${devopsimage}" &> /dev/null  # Mute eventual image pull
     - |
         for db in ${STAGED_DBS}; do
             docker run -v "${cfg_mount}" "${devopsimage}" dodoo-migrator -f ./.migration.yml -d "${db}"
