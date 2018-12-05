@@ -20,7 +20,10 @@
 # TIPP: Jobs tagged with [image-builder] can be run on a worker
 #   that is set up with docker-socket binding instead of the dind service.
 #   Due to shared docker build context, this can dramatically speed up building
-#   jobs. Consider running this runner on a "build bastion" server.
+#   jobs. Consider running this runner on a "build bastion" server. Don't use
+#   this technique for tests or migration, see:
+#   https://gitlab.com/gitlab-org/gitlab-ce/issues/41227#note_122331075
+#   TL;DR: It won't share the bind mounted volumes properly.
 
 
 # Repaclace this with your custom ci image, if needed
@@ -80,9 +83,9 @@ Build-Twins:
 Test-Diff:
   only: [branches]
   except: ['/^HOTFIX-.*$/']
-  tags: [image-builder]
   stage: Test
   services:
+  - docker:dind
   - postgres:latest
   variables:
     # We only need git to validate changed modules,
@@ -108,8 +111,9 @@ Test-Diff:
 
 Migrate-Staged-DBs:
   only: [tags]
-  tags: [image-builder]
   stage: Stage
+  services:
+  - docker:dind
   variables:
     GIT_STRATEGY: none
     STAGED_DBS: "SPACE SEPARATED LIST OF EXISTING DBS TO STAGE MIGRATION"
