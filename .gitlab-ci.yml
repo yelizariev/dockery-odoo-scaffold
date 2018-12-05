@@ -65,6 +65,7 @@ before_script:
 - cfg_mount="$(pwd)/.cfg-custom.ini:/opt/odoo/cfg.d/02-custom:ro"
 - git_mount="$(pwd)/.git:/mnt"
 - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+- pwd  # Orientation
 - ls -la  # Orientation
 
 Build-Twins:
