@@ -98,6 +98,7 @@ Test-Diff:
     - mkdir -p "${ODOO_BASEPATH}"
     - mkdir -p "${ODOO_BASEPATH}/addons"
     - mkdir -p "${ODOO_BASEPATH}/cfg.d"
+    - mkdir -p "/run/secrets/"
 
     - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo-bin" "${ODOO_BASEPATH}/odoo-bin"
     - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo"     "${ODOO_BASEPATH}/odoo"
@@ -141,6 +142,7 @@ Migrate-Staged-DBs:
     - mkdir -p "${ODOO_BASEPATH}"
     - mkdir -p "${ODOO_BASEPATH}/addons"
     - mkdir -p "${ODOO_BASEPATH}/cfg.d"
+    - mkdir -p "/run/secrets/"
 
     - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo-bin" "${ODOO_BASEPATH}/odoo-bin"
     - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo"     "${ODOO_BASEPATH}/odoo"
