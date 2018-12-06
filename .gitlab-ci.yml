@@ -17,6 +17,8 @@
 #   expension. Especially you want to define sensitive variables in the gitlab
 #   repository directly rather than checking them in into your source code.
 #
+# 5 Ensure test and migration stages use the correct runner image version
+#
 # TIPP: Jobs tagged with [image-builder] can be run on a worker
 #   that is set up with docker-socket binding instead of the dind service.
 #   Due to shared docker build context, this can dramatically speed up building
@@ -59,12 +61,10 @@ cache:
   untracked: true
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
 stages:
-- Build
 - Test
 - Stage
 - Release
 before_script:
-- ci-log-versions.sh
 # Set the repo's environment
 - export $(egrep -v '^#' .env | xargs)
 - devopsimage="${IMAGE}:devops-${ODOO_VERSION}-${CI_PIPELINE_IID}"
@@ -75,66 +75,115 @@ before_script:
 - pwd  # Orientation
 - ls -la  # Orientation
 
-Build-Twins:
-  stage: Build
-  only: [branches]
-  tags: [image-builder]
-  except: ['/^HOTFIX-.*$/']
-  script:
-    - ci-build.sh base ${CI_PIPELINE_IID}
-    - ci-build.sh devops ${CI_PIPELINE_IID}
 
 Test-Diff:
+  image:
+    name: xoelabs/dockery-odoo:12.0-devops  # Adapt to branch manually !!
+    entrypoint: [""]
   only: [branches]
-  except: ['/^HOTFIX-.*$/']
+  except: ['/^.*-HOTFIX$/']
   stage: Test
   services:
-  - docker:dind
   - postgres:latest
+  artifacts:
+    paths:
+    - testlogs
+    expire_in: 1 week
   variables:
-    # We only need git to validate changed modules,
-    # we can't introspect submodules anyway
-    GIT_SUBMODULE_STRATEGY: 'none'
     # You can alternatively use an external db connection:
     # Use the CUSTOM_CONFIG variable
     POSTGRES_DB: postgres
     POSTGRES_USER: odoo
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: "odoo"
     # Modules configuration
     INCLUDE: YOUR_INTEGRATION_TEST_MODULE
   script:
-    - docker pull "${devopsimage}" &> /dev/null  # Mute eventual image pull
+    - mkdir -p "${CI_PROJECT_DIR}/testlogs"
+    - mkdir -p "${ODOO_BASEPATH}"
+    - mkdir -p "${ODOO_BASEPATH}/addons"
+    - mkdir -p "${ODOO_BASEPATH}/cfg.d"
+
+    - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo-bin" "${ODOO_BASEPATH}/odoo-bin"
+    - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo"     "${ODOO_BASEPATH}/odoo"
+    - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/addons"   "${ODOO_BASEPATH}/addons/000"
+    - ln -s "${CI_PROJECT_DIR}/vendor/odoo/ee"          "${ODOO_BASEPATH}/addons/001"
+    - ln -s "${CI_PROJECT_DIR}/src"                     "${ODOO_BASEPATH}/addons/090"
+    - ln -s "${CI_PROJECT_DIR}/cfg"                     "${ODOO_BASEPATH}/cfg.d"
     - |
-      docker run \
-        -v "${cfg_mount}" \
-        -v "${git_mount}" \
-        "${devopsimage}" dodoo-tester \
-          -d OdooTest \
-          --git-dir /mnt/.git "origin/${ODOO_VERSION}" \
-          -i ${INCLUDE}
+      if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then
+         ln -s "${CI_PROJECT_DIR}/.adminpwd"     /run/secrets/adminpwd;
+      fi
+
+    # Symlink vendored modules
+    - ln -s "${CI_PROJECT_DIR}/vendor/it-projects-llc/<MODULEDIR>"  "${ODOO_BASEPATH}/addons/010"
+    - ln -s "${CI_PROJECT_DIR}/vendor/xoe-labs/<MODULEDIR>"         "${ODOO_BASEPATH}/addons/020"
+    - ln -s "${CI_PROJECT_DIR}/vendor/OCA/<MODULEDIR>"              "${ODOO_BASEPATH}/addons/030"
+
+    - |
+      dodoo-tester \
+        -d "OdooTest-${CI_PIPELINE_IID}" \
+        --git-dir ./.git "origin/${ODOO_VERSION}" \
+        -i "${INCLUDE}"
 
 Migrate-Staged-DBs:
+  image:
+    name: xoelabs/dockery-odoo:12.0-devops  # Adapt to branch manually !!
+    entrypoint: [""]
   only: [tags]
+  except: ['/^.*-HOTFIX$/']
   stage: Stage
-  services:
-  - docker:dind
   variables:
-    GIT_STRATEGY: none
     STAGED_DBS: "SPACE SEPARATED LIST OF EXISTING DBS TO STAGE MIGRATION"
+    CUSTOM_CONFIG: |
+      [options]
+      db_host = <postgreshost.tld>
+      db_port = 5432
+      db_user = odoo
+      db_password = <$GITLABCIVARIABLE>
   script:
-    - docker pull "${devopsimage}" &> /dev/null  # Mute eventual image pull
+    - mkdir -p "${CI_PROJECT_DIR}/testlogs"
+    - mkdir -p "${ODOO_BASEPATH}"
+    - mkdir -p "${ODOO_BASEPATH}/addons"
+    - mkdir -p "${ODOO_BASEPATH}/cfg.d"
+
+    - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo-bin" "${ODOO_BASEPATH}/odoo-bin"
+    - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo"     "${ODOO_BASEPATH}/odoo"
+    - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/addons"   "${ODOO_BASEPATH}/addons/000"
+    - ln -s "${CI_PROJECT_DIR}/vendor/odoo/ee"          "${ODOO_BASEPATH}/addons/001"
+    - ln -s "${CI_PROJECT_DIR}/src"                     "${ODOO_BASEPATH}/addons/090"
+    - ln -s "${CI_PROJECT_DIR}/cfg"                     "${ODOO_BASEPATH}/cfg.d"
+    - |
+      if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then
+         ln -s "${CI_PROJECT_DIR}/.adminpwd"     /run/secrets/adminpwd;
+      fi
+
+    # Symlink vendored modules
+    - ln -s "${CI_PROJECT_DIR}/vendor/it-projects-llc/<MODULEDIR>"  "${ODOO_BASEPATH}/addons/010"
+    - ln -s "${CI_PROJECT_DIR}/vendor/xoe-labs/<MODULEDIR>"         "${ODOO_BASEPATH}/addons/020"
+    - ln -s "${CI_PROJECT_DIR}/vendor/OCA/<MODULEDIR>"              "${ODOO_BASEPATH}/addons/030"
     - |
         for db in ${STAGED_DBS}; do
-            docker run -v "${cfg_mount}" "${devopsimage}" dodoo-migrator -f ./.migration.yml -d "${db}"
+          dodoo-migrator \
+            -d "${db}" \
+            -f ./.migration.yml
         done
+
+
+Build-Twins:
+  stage: Release
+  only: [branches]
+  tags: [image-builder]
+  except: ['/^.*-HOTFIX$/']
+  script:
+    - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+    - ci-build.sh base ${CI_PIPELINE_IID}
+    - ci-build.sh devops ${CI_PIPELINE_IID}
 
 Release:
   stage: Release
   only: [tags]
   tags: [image-builder]
-  allow_failure: false
   script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
     - ci-build.sh base "${CI_COMMIT_TAG}"
     - ci-build.sh devops "${CI_COMMIT_TAG}"
-  environment: production
