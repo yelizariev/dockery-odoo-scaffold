@@ -13,14 +13,16 @@ echo -e "\t${GREEN}- Odoo Enterprise Code (if configured)${NC}"
 echo -e "\t${GREEN}- Vendored modules${NC}"
 echo -e "\t${GREEN}- Your project modules (\`src\` folder)${NC}"
 echo -e "\t${GREEN}- Your further customizations from the Dockerfile${NC}\n"
-docker build --tag "${IMAGE}:base-${ODOO_VERSION}" --build-arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}" "${DIR}/../."
 
-echo -e "\n${RED}Now we build the devops image atop the production image.\n"
+docker build --tag "${IMAGE}:base-${ODOO_VERSION}"   --build-arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}-base"   "${DIR}/../."
+
+echo -e "\n${RED}Now we build the devops image as sibling to the production image.\n"
 echo -e "\t${GREEN}- Provides Odoo Server API extensions for DevOps.${NC}"
 echo -e "\t${GREEN}- Remote build context maintained by XOE.${NC}"
 echo -e "\t${GREEN}- Therefore, as devops image evolves, just rebuild.${NC}"
-echo -e "\t${GREEN}- For details, visit: https://git.io/fx7FA${NC}\n"
-docker build --tag "${IMAGE}:devops-${ODOO_VERSION}" --build-arg "FROM_IMAGE=${IMAGE}:base-${ODOO_VERSION}" "${FROMREPO}#master:images/devops"
+echo -e "\t${GREEN}- For details, visit: https://git.io/fpMvT${NC}\n"
+
+docker build --tag "${IMAGE}:devops-${ODOO_VERSION}" --build-arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}-devops" "${DIR}/../."
 
 echo -e "\n${RED}First time? Next, do:${NC}\n"
 echo -e "\t${GREEN}- apply patches to your local workdir: \`make patch\`;${NC}"
