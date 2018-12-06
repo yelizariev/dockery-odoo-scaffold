@@ -105,7 +105,8 @@ Test-Diff:
     - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/addons"   "${ODOO_BASEPATH}/addons/000"
     - ln -s "${CI_PROJECT_DIR}/vendor/odoo/ee"          "${ODOO_BASEPATH}/addons/001"
     - ln -s "${CI_PROJECT_DIR}/src"                     "${ODOO_BASEPATH}/addons/090"
-    - ln -s "${CI_PROJECT_DIR}/cfg"                     "${ODOO_BASEPATH}/cfg.d"
+    - ln -s "${CI_PROJECT_DIR}/.cfg-default.ini"        "${ODOO_BASEPATH}/cfg.d/01-default"
+    - ln -s "${CI_PROJECT_DIR}/.cfg-custom-ci.ini"      "${ODOO_BASEPATH}/cfg.d/02-custom"
     - |
       if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then
          ln -s "${CI_PROJECT_DIR}/.adminpwd"     /run/secrets/adminpwd;
@@ -149,7 +150,8 @@ Migrate-Staged-DBs:
     - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/addons"   "${ODOO_BASEPATH}/addons/000"
     - ln -s "${CI_PROJECT_DIR}/vendor/odoo/ee"          "${ODOO_BASEPATH}/addons/001"
     - ln -s "${CI_PROJECT_DIR}/src"                     "${ODOO_BASEPATH}/addons/090"
-    - ln -s "${CI_PROJECT_DIR}/cfg"                     "${ODOO_BASEPATH}/cfg.d"
+    - ln -s "${CI_PROJECT_DIR}/.cfg-default.ini"        "${ODOO_BASEPATH}/cfg.d/01-default"
+    - ln -s "${CI_PROJECT_DIR}/.cfg-custom-ci.ini"      "${ODOO_BASEPATH}/cfg.d/02-custom"
     - |
       if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then
          ln -s "${CI_PROJECT_DIR}/.adminpwd"     /run/secrets/adminpwd;
