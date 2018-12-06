@@ -117,6 +117,7 @@ Test-Diff:
     - ln -s "${CI_PROJECT_DIR}/vendor/xoe-labs/<MODULEDIR>"         "${ODOO_BASEPATH}/addons/020"
     - ln -s "${CI_PROJECT_DIR}/vendor/OCA/<MODULEDIR>"              "${ODOO_BASEPATH}/addons/030"
 
+    - source /entrypoint.d/10-set-appenv.sh
     - |
       dodoo-tester \
         -d "OdooTest-${CI_PIPELINE_IID}" \
@@ -161,6 +162,8 @@ Migrate-Staged-DBs:
     - ln -s "${CI_PROJECT_DIR}/vendor/it-projects-llc/<MODULEDIR>"  "${ODOO_BASEPATH}/addons/010"
     - ln -s "${CI_PROJECT_DIR}/vendor/xoe-labs/<MODULEDIR>"         "${ODOO_BASEPATH}/addons/020"
     - ln -s "${CI_PROJECT_DIR}/vendor/OCA/<MODULEDIR>"              "${ODOO_BASEPATH}/addons/030"
+
+    - source /entrypoint.d/10-set-appenv.sh
     - |
         for db in ${STAGED_DBS}; do
           dodoo-migrator \
