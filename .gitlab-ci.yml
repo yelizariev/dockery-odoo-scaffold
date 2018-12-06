@@ -118,6 +118,7 @@ Test-Diff:
     - ln -s "${CI_PROJECT_DIR}/vendor/OCA/<MODULEDIR>"              "${ODOO_BASEPATH}/addons/030"
 
     - source /entrypoint.d/10-set-appenv.sh
+    - dodoo-initializer -n "OdooTest-${CI_PIPELINE_IID}"
     - |
       dodoo-tester \
         -d "OdooTest-${CI_PIPELINE_IID}" \
