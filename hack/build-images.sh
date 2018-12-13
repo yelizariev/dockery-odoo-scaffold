@@ -14,7 +14,11 @@ echo -e "\t${GREEN}- Vendored modules${NC}"
 echo -e "\t${GREEN}- Your project modules (\`src\` folder)${NC}"
 echo -e "\t${GREEN}- Your further customizations from the Dockerfile${NC}\n"
 
-docker build --tag "${IMAGE}:base-${ODOO_VERSION}"   --build-arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}-base"   "${DIR}/../."
+if [ "$1" = "nocache" ]; then
+    docker build --tag "${IMAGE}:base-${ODOO_VERSION}" --no-cache  --build-arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}-base"   "${DIR}/../."
+else
+    docker build --tag "${IMAGE}:base-${ODOO_VERSION}" --build-arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}-base"   "${DIR}/../."
+fi
 
 echo -e "\n${RED}Now we build the devops image as sibling to the production image.\n"
 echo -e "\t${GREEN}- Provides Odoo Server API extensions for DevOps.${NC}"
@@ -22,7 +26,11 @@ echo -e "\t${GREEN}- Remote build context maintained by XOE.${NC}"
 echo -e "\t${GREEN}- Therefore, as devops image evolves, just rebuild.${NC}"
 echo -e "\t${GREEN}- For details, visit: https://git.io/fpMvT${NC}\n"
 
-docker build --tag "${IMAGE}:devops-${ODOO_VERSION}" --build-arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}-devops" "${DIR}/../."
+if [ "$1" = "nocache" ]; then
+    docker build --tag "${IMAGE}:devops-${ODOO_VERSION}" --no-cache  --build-arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}-devops" "${DIR}/../."
+else
+    docker build --tag "${IMAGE}:devops-${ODOO_VERSION}" --build-arg "FROM_IMAGE=${FROM}:${ODOO_VERSION}-devops" "${DIR}/../."
+fi
 
 echo -e "\n${RED}First time? Next, do:${NC}\n"
 echo -e "\t${GREEN}- apply patches to your local workdir: \`make patch\`;${NC}"

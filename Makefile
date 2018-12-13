@@ -16,6 +16,9 @@ build: chmod-scripts
 	env $(ENV) hack/build-images.sh
 
 
+no-cache-build: chmod-scripts
+	env $(ENV) hack/build-images.sh nocache
+
 patch: chmod-scripts
 	env $(ENV) hack/apply-patches.sh
 
