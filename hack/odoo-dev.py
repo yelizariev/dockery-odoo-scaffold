@@ -71,7 +71,9 @@ class Git(object):
             res = subprocess.check_output(cmd)
         except subprocess.CalledProcessError:
             res = None
-        if isinstance(res, str):
+        if isinstance(res, bytes):
+            res = res.decode("utf-8")
+        if res:
             res = res.strip("\n")
         return res
 
