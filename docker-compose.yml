@@ -94,27 +94,27 @@ services:
 
 # ------------------------
 
-  # migrate:
-  #   << : *default-odoo
-  #   depends_on: ['postgres', 'wdb']
-  #   entrypoint: ['/entrypoint.sh', 'migrate']
-  #   command: []
+  migrate:
+    << : *default-odoo
+    depends_on: ['postgres', 'wdb']
+    entrypoint: ['/entrypoint.sh', 'dodoo', 'migrate']
+    command: []
 
 # ------------------------
 
-  # initdb:
-  #   << : *default-odoo
-  #   depends_on: ['postgres', 'wdb']
-  #   entrypoint: ['/entrypoint.sh', 'initdb']
-  #   command: []
+  init:
+    << : *default-odoo
+    depends_on: ['postgres', 'wdb']
+    entrypoint: ['/entrypoint.sh', 'dodoo', 'init']
+    command: []
 
 # ------------------------
 
-  # load:
-  #   << : *default-odoo
-  #   depends_on: ['postgres', 'wdb']
-  #   entrypoint: ['/entrypoint.sh', 'loader']
-  #   command: []
+  load:
+    << : *default-odoo
+    depends_on: ['postgres', 'wdb']
+    entrypoint: ['/entrypoint.sh', 'dodoo', 'load']
+    command: []
 
 # ------------------------
 

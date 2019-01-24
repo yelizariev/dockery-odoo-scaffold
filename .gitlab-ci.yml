@@ -122,9 +122,9 @@ Test-Diff:
     - /patches $(pwd)/vendor/odoo/cc || true
 
     - source /entrypoint.d/10-set-appenv.sh
-    - dodoo-initializer -n "OdooTest-${CI_PIPELINE_IID}"
+    - dodoo init -n "OdooTest-${CI_PIPELINE_IID}"
     - |
-      dodoo-tester \
+      dodoo test \
         -d "OdooTest-${CI_PIPELINE_IID}" \
         --git-dir ./.git "origin/${ODOO_VERSION}" \
         -i "${INCLUDE}"
@@ -175,7 +175,7 @@ Migrate-Staged-DBs:
     - source /entrypoint.d/10-set-appenv.sh
     - |
         for db in ${STAGED_DBS}; do
-          dodoo-migrator \
+          dodoo migrate \
             -d "${db}" \
             -f ./.migration.yml
         done

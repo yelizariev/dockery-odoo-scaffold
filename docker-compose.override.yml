@@ -15,11 +15,11 @@ services:
     << : *add-additional-volumes
   shell:
     << : *add-additional-volumes
-  # migrate:
-  #   << : *add-additional-volumes
-  # initdb:
-  #   << : *add-additional-volumes
-  # load:
-  #   << : *add-additional-volumes
+  migrate:
+    << : *add-additional-volumes
+  init:
+    << : *add-additional-volumes
+  load:
+    << : *add-additional-volumes
   # translate:
   #   << : *add-additional-volumes
