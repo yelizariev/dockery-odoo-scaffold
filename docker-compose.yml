@@ -32,6 +32,7 @@ volumes:
   odoo-data: {driver: local}
   odoo-backup: {driver: local}
   odoo-testlogs: {driver: local}
+  odoo-dodoo-loader: {driver: local}
   psql: {driver: local}
 
 services:
