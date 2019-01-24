@@ -14,6 +14,7 @@ x-odoo:
   - odoo-data:/var/lib/odoo-persist
   - odoo-backup:/var/lib/odoo-backup
   - odoo-testlogs:/var/lib/odoo-testlogs
+  - odoo-dodoo-loader:/dodoo-loader
   # Host paths (config)
   - .cfg-default.ini:/opt/odoo/cfg.d/01-default:ro
   - .cfg-custom.ini:/opt/odoo/cfg.d/02-custom:ro
