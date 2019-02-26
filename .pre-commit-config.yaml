@@ -26,3 +26,22 @@ repos:
     rev: v4.3.4
     hooks:
     - id: isort
+-   repo: https://github.com/pre-commit/mirrors-pylint
+    rev: v1.8.4
+    hooks:
+    -   id: pylint
+        language_version: python3.6
+        entry: pylint -d no-utf8-coding-comment -d manifest-required-author -d missing-readme -d redundant-modulename-xml
+        additional_dependencies: [
+          'astroid==1.6.3',
+          'pylint-plugin-utils==0.2.4',
+          'docutils==0.14',
+          'lxml>=2.3.2',
+          'Pygments==2.2',
+          'restructuredtext_lint==1.1',
+          'isort==4.3.4',
+          'whichcraft',
+          'rfc3986',
+          'six',
+          'pylint-odoo==2.0.2'
+        ]
