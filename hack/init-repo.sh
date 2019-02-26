@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 project=$(basename "$(pwd)")
 PS3='Please select Odoo version: '
@@ -9,7 +9,7 @@ select opt in "${options[@]}"; do
 		2 ) version=$opt; break;;
 		3 ) version=$opt; break;;
 		4 ) version=$opt; break;;
-	    *) echo "Invalid option. Try another one.";continue;;
+		*) echo "Invalid option. Try another one.";continue;;
 	esac
 done
 echo -e "Odoo version: ${version}\n"
@@ -20,7 +20,7 @@ select opt in "${options[@]}"; do
 	case "$REPLY" in
 		1 ) enterprise=$opt; echo -e "Fetching enterprise...\n"; break;;
 		2 ) enterprise=$opt; echo -e "Without enterprise...\n"; break;;
-	    *) echo "Invalid option. Try another one.";continue;;
+		*) echo "Invalid option. Try another one.";continue;;
 	esac
 done
 
@@ -44,7 +44,7 @@ select opt in "${options[@]}"; do
 			done
 			break;;
 		2 ) volumemounts=${volumemounts:-# Dummy mount not to break this yaml template...}"\n  - .gitignore:/.gitignore:ro"; break;;
-	    *) echo "Invalid option. Try another one.";continue;;
+		*) echo "Invalid option. Try another one.";continue;;
 	esac
 done
 

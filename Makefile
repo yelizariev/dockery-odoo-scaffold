@@ -30,4 +30,4 @@ faq:
 	cat hack/faq.txt
 
 chmod-scripts:
-	chmod +x -R hack
+	chmod -R +x hack
