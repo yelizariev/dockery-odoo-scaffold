@@ -8,7 +8,12 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 APPLY_DIR="${DIR}/../vendor/odoo/cc"
-source <(docker run --entrypoint= "${FROM}:${ODOO_VERSION}-base" cat patches)
+PATCHES=$(docker run --entrypoint "" "${FROM}:${ODOO_VERSION}-base"\
+    cat patches
+)
+CORRECT_SHEBANG_BASH="#!/usr/bin/env bash"
+eval "${PATCHES/\#\!\/bin\/bash/$CORRECT_SHEBANG_BASH}"
+
 PREV_PWD=$(pwd)
 cd "${DIR}/../vendor/odoo/cc/"
 git stash push --keep-index --include-untracked --message "Patches for ${ODOO_VERSION}" &> /dev/null
