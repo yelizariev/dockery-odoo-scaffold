@@ -58,11 +58,11 @@ else
 fi
 
 # Seed Placeholders
-sed -i "s|{{ VOLUMES }}|${volumemounts}|" docker-compose.override.yml
-sed -i "s|{{ DOCKERCOPIES }}|${dockercopies}|" Dockerfile
-sed -i "s/{{ PROJECT }}/${project}/" Dockerfile .env
-sed -i "s/{{ DEFAULT_BRANCH }}/${version}/" Dockerfile .env
-sed -i "s/{{ ENTERPRISE }}/${enterprise}/" Dockerfile .env
+sed -i -e "s|{{ VOLUMES }}|${volumemounts}|" docker-compose.override.yml
+sed -i -e "s|{{ DOCKERCOPIES }}|${dockercopies}|" Dockerfile
+sed -i -e "s/{{ PROJECT }}/${project}/" Dockerfile .env
+sed -i -e "s/{{ DEFAULT_BRANCH }}/${version}/" Dockerfile .env
+sed -i -e "s/{{ ENTERPRISE }}/${enterprise}/" Dockerfile .env
 
 # Git commit
 git add .
