@@ -6,24 +6,24 @@ else
 endif
 
 init: chmod-scripts
-	hack/init-repo.sh
+	hack/init_repo.py
 	editor .env
 	editor Dockerfile
 
 create: pull-base build
 
 pull-base: chmod-scripts
-	env $(ENV) hack/pull-image.sh
+	env $(ENV) hack/pull_image.py
 
 build: chmod-scripts
-	env $(ENV) hack/build-images.sh
+	env $(ENV) hack/build_images.py
 
 
 no-cache-build: chmod-scripts
-	env $(ENV) hack/build-images.sh nocache
+	env $(ENV) hack/build_images.py --nocache
 
 patch: chmod-scripts
-	env $(ENV) hack/apply-patches.py
+	env $(ENV) hack/apply_patches.py
 
 
 faq:
