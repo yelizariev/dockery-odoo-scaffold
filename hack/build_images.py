@@ -16,9 +16,15 @@ def build_image(image_type, nocache):
     from_image = get_from_image(image_type)
     image_tag = get_image_tag(image_type)
     if nocache:
-        cmd = 'docker build --tag "{BASE_IMAGE_TAG}" --no-cache  --build-arg "FROM_IMAGE={FROM_IMAGE}"   "{DIR}/../."'
+        cmd = (
+            'docker build --tag "{BASE_IMAGE_TAG}" --no-cache  --build-arg '
+            '"FROM_IMAGE={FROM_IMAGE}"   "{DIR}/../."'
+        )
     else:
-        cmd = 'docker build --tag "{BASE_IMAGE_TAG}" --build-arg "FROM_IMAGE={FROM_IMAGE}"   "{DIR}/../."'
+        cmd = (
+            'docker build --tag "{BASE_IMAGE_TAG}" --build-arg '
+            '"FROM_IMAGE={FROM_IMAGE}"   "{DIR}/../."'
+        )
     for line in call_cmd_realtime(
         cmd.format(BASE_IMAGE_TAG=image_tag, FROM_IMAGE=from_image, DIR=hack_dir)
     ):
