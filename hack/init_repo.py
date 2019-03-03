@@ -22,10 +22,12 @@ ODOO_VERSIONS = ("10.0", "11.0", "12.0", "master")
 IS_GIT_URL_REGEXP = (
     r"(?:git|ssh|https?|git@[-\w.]+):(\/\/)?(.*?)(\.git)(\/?|\#[-\d\w._]+?)$"
 )
-REPO_REGEXP = "(?P<host>(git@|https://)([\\w\\.@]{1,})(/|:))(?P<owner>[\\w,\\-,_]{1,})/(?P<repo>[\\w,\\-,_]{1,})(.git){0,1}((/){0,1})"
+REPO_REGEXP = "(?P<host>(git@|https://)([\\w\\.@]{1,})(/|:))(?P<owner>[\\w,\\-,_]{1,})/(?P<repo>[\\w,\\-,_]{1,})(.git){0,1}((/){0,1})"  # noqa
 
 VOLUMEMOUNT_TMPL = "  - ./vendor/{org}/{repo_name}:/opt/odoo/addons/0{mountindex}:ro"
-DOCKERCOPY_TMPL = "COPY  --chown=odoo:odoo vendor/${org}/${repo_name}   /opt/odoo/addons/0${mountindex}"
+DOCKERCOPY_TMPL = (
+    "COPY  --chown=odoo:odoo vendor/{org}/{repo_name}   /opt/odoo/addons/0{mountindex}"
+)
 
 
 class OdooVersionChoice(click.types.Choice):
@@ -77,7 +79,7 @@ def print_edition(ctx, param, value):
         ce = "CE(Community Edition)"
         return green("Odoo " + odoo_version + " " + (ee if value else ce))
 
-    click.echo("You select " + get_edition(ctx.params["odoo_version"], value))
+    click.echo("You selected " + get_edition(ctx.params["odoo_version"], value))
 
 
 @click.command()
@@ -99,7 +101,7 @@ def main(odoo_version, is_enterprise):
     additional_repos = []
     fist_repo = True
     while True:
-        msg = "Add additional repo" if fist_repo else "Add another one repo"
+        msg = "Add additional repo" if fist_repo else "Add another repo"
         add_new = click.confirm(msg, default=True)
         if not add_new:
             break
@@ -128,7 +130,8 @@ def main(odoo_version, is_enterprise):
         mkdir_p(os.path.join("vendor", org))
 
         call_cmd(
-            "git submodule add -b {odoo_version} {repo_url}  vendor/{org}/{repo_name}".format(
+            "git submodule add -b {odoo_version} {repo_url} "
+            "vendor/{org}/{repo_name}".format(
                 odoo_version=odoo_version,
                 repo_url=repo_url,
                 org=org,

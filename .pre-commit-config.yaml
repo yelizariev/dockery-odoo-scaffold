@@ -33,10 +33,9 @@ repos:
         language_version: python3.6
         entry: pylint
         additional_dependencies: [
-            # TODO: switch to versioned release when available
-            'git+https://github.com/OCA/pylint-odoo.git@61fbc423f348afd4a557d67274cf2b1420b1a262#egg=pylint_odoo',
+            pylint-odoo>=3.0.1,
         ]
         exclude: >
             (?x)^(
-                hack/odoo-dev.py
+                hack/.*
             )$
