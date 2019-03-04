@@ -15,8 +15,6 @@ def main():
     from_image = get_from_image("base")
 
     patches = call_cmd('docker run --entrypoint "" {} cat patches'.format(from_image))
-    patches = patches.replace("#!/bin/bash", "#!/usr/bin/env bash")
-    os.system(patches)
 
     prev_pwd = os.getcwd()
 
@@ -25,6 +23,9 @@ def main():
 
     apply_dir = os.path.abspath(os.path.join(hack_dir, "..", odoo_workdir))
     os.chdir(apply_dir)
+
+    patches = patches.replace("#!/bin/bash", "#!/usr/bin/env bash")
+    os.system(patches)
 
     click.echo(
         call_cmd(
