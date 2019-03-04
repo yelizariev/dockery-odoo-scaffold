@@ -4,7 +4,7 @@ Test-Diff:
   extends: .tests
   only:
     refs: [branches]
-    changes: ['vendor/*', 'src/*']
+    changes: ['vendor/**/*', 'src/**/*']
   script:
   - dodoo test -d "${ODOO_DB_NAME}" --git-dir ./.git "origin/${ODOO_VERSION}"
 
