@@ -194,10 +194,22 @@ def main(odoo_version, is_enterprise):
         compose_impersonation = "{}:{}".format(os.getuid(), os.getgid())
         os.putenv("COMPOSE_IMPERSONATION", compose_impersonation)
         os.environ["COMPOSE_IMPERSONATION"] = compose_impersonation
-        with open(os.path.expanduser("~/.bashrc"), "w") as file:
-            file.write(
-                "\nexport COMPOSE_IMPERSONATION='{COMPOSE_IMPERSONATION}'\n".format(
-                    COMPOSE_IMPERSONATION=compose_impersonation
+        try:
+            with open(os.path.realpath(os.path.expanduser("~/.bashrc")), "w") as file:
+                file.write(
+                    "\nexport COMPOSE_IMPERSONATION='{COMPOSE_IMPERSONATION}'\n".format(
+                        COMPOSE_IMPERSONATION=compose_impersonation
+                    )
+                )
+        except IOError:
+            click.echo(
+                red(
+                    "Failed adding following line to {}:\n\t "
+                    "export COMPOSE_IMPERSONATION='{}'\n "
+                    "Please add it manually for full feature support.".format(
+                        os.path.realpath(os.path.expanduser("~/.bashrc")),
+                        compose_impersonation,
+                    )
                 )
             )
 
