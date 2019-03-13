@@ -195,7 +195,7 @@ def main(odoo_version, is_enterprise):
         os.putenv("COMPOSE_IMPERSONATION", compose_impersonation)
         os.environ["COMPOSE_IMPERSONATION"] = compose_impersonation
         try:
-            with open(os.path.realpath(os.path.expanduser("~/.bashrc")), "w") as file:
+            with open(os.path.realpath(os.path.expanduser("~/.bashrc")), "a") as file:
                 file.write(
                     "\nexport COMPOSE_IMPERSONATION='{COMPOSE_IMPERSONATION}'\n".format(
                         COMPOSE_IMPERSONATION=compose_impersonation
