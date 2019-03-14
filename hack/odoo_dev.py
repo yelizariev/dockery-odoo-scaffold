@@ -30,7 +30,7 @@ from future import standard_library
 standard_library.install_aliases()
 
 
-BACKPORT_FLAG = "-BACKPORT-"
+BACKPORT_FLAG = "BACKPORT"
 BASE_BRANCHES = ["6.0", "6.1", "7.0", "8.0", "9.0", "10.0", "11.0", "12.0", "master"]
 PATCH_PREFIX = "{}/{}-".format
 PATCH_FORMAT = "{}/{}-{}".format
@@ -115,8 +115,8 @@ class Git(object):
         else:
             return True
 
-    def cherry(self, origin, target):
-        res = self.run(["cherry", target, origin])
+    def cherry(self, source, target):
+        res = self.run(["cherry", target, source])
         return res.replace("+ ", "").split("\n")
 
     def _get_staging_name(self, sstr):
@@ -176,10 +176,7 @@ class Git(object):
                 self.checkout(base_branch)
                 self.run(["branch", "-D", staging_name])
 
-    def _backport_name(self, candidate, origin, target):
-        return candidate.replace(origin, target + BACKPORT_FLAG)
-
-    def backport_patches(self):
+    def backport_patches(self, name=None):
         click.secho("BACKPORT: Backporting patch branches ...", bg="cyan", fg="white")
 
         series = sorted(self.branches)
@@ -189,6 +186,8 @@ class Git(object):
             to_series = series[-1]
             to_backport = []
             for br in remote_branches:
+                if name and not br.endswith(name):
+                    continue
                 if self._is_patch(br, from_series):
                     to_backport.append(br)
 
@@ -197,25 +196,26 @@ class Git(object):
                     "BACKPORT: %s - Backporting branch ..." % backport, fg="cyan"
                 )
                 commits = self.cherry(backport, from_series)
-                staging_name = self._get_staging_name(backport)
-                remote_backport_name = self._backport_name(
+                backport_name = self._backport_name(
                     backport, from_series, to_series
                 )
-                staging_backport_name = self._backport_name(
-                    staging_name, from_series, to_series
-                )
+                staging_backport_name = self._get_staging_name(backport_name)
                 self.checkout(to_series, staging_backport_name)
                 if self.cherry_pick(commits):
                     click.secho(
-                        "BACKPORT: %s - Pushing ..." % remote_backport_name, fg="cyan"
+                        "BACKPORT: %s - Pushing ..." % backport_name, fg="cyan"
                     )
                     self.run(["push", "-f", "-u", self.remote, staging_backport_name])
                 self.checkout(to_series)
                 self.run(["branch", "-D", staging_backport_name])
 
-    def backport_patch(self, commits, to_series, staging_backport_name):
-        self.checkout(to_series, staging_backport_name)
-        if self.cherry_pick(commits):
+    def backport_patch(self, refspec, target, name):
+        candidate = self.remote + "/" + name,
+        backport_name = self._backport_name(
+             candidate, "", target, tag="COMMIT")
+        staging_backport_name = self._get_staging_name(backport_name)
+        self.checkout(target, staging_backport_name)
+        if self.cherry_pick([refspec]):
             click.secho(
                 "BACKPORT: {}/{} - Pushing ...".format(
                     self.remote, staging_backport_name
@@ -223,7 +223,7 @@ class Git(object):
                 fg="cyan",
             )
             self.run(["push", "-f", "-u", self.remote, staging_backport_name])
-        self.checkout(to_series)
+        self.checkout(target)
         self.run(["branch", "-D", staging_backport_name])
 
     def compile(self):
@@ -256,6 +256,10 @@ class Git(object):
         res = self.run(command)
         return res
 
+    def _backport_name(self, candidate, source, target, tag="BRANCH"):
+        return candidate.replace(
+            self.remote + "/" + source,
+            self.remote + "/" + target + "-" + BACKPORT_FLAG + "-" + tag + "-")
 
 @click.group()
 @click.option("--git-dir", default="vendor/odoo/cc/.git", help="Local Repo Git-Dir.")
@@ -272,7 +276,7 @@ def main(ctx, git_dir, remote):
 @main.command()
 @click.option("--update/--no-update", "-u", default=False, help="Update remote repo.")
 @click.option("--rebase/--no-rebase", "-r", default=False, help="Rebase patches.")
-@click.option("--backport/--no-backport", "-b", default=False, help="Backport patches.")
+# @click.option("--backport/--no-backport", "-b", default=False, help="Backport patches.")
 @click.option(
     "--compile/--no-compile",
     "-c",
@@ -286,6 +290,8 @@ def main(ctx, git_dir, remote):
 @click.argument("branches", nargs=-1, required=True)
 @click.pass_context
 def maintain(ctx, update, rebase, backport, compile_branch, auto, branches):
+    """ Run maintenance operations on remote development repository.
+    """
     git = ctx.obj["GIT"]
     git._add_branches(list(branches))
 
@@ -293,21 +299,46 @@ def maintain(ctx, update, rebase, backport, compile_branch, auto, branches):
         git.update_remote()
     if rebase or auto:
         git.rebase_patches()
-    if backport or auto:
-        git.backport_patches()
     if compile_branch or auto:
         git.compile()
 
 
-@main.command()
+@main.group()
+@click.pass_context
+def backport(ctx):
+    """ Run backporting operations.
+    """
+    pass
+
+@backport.command()
 @click.argument("commit", required=True)
 @click.argument("target", required=True)
 @click.argument("name", required=True)
 @click.pass_context
-def backport(ctx, commit, target, name):
+def commit(ctx, commit, target, name):
+    """ Backport a single commit from upstream: use for backporting fixes
+    not backported in mupstream.
+
+    COMMIT  Refers to the hash value of a cherry-pick commit reference.
+    NAME    Refers to the name of the patch without any prefixes.
+    TARGET  Refers to the target branch (odoo series) for the final patch.
+    """
     git = ctx.obj["GIT"]
-    name = target + BACKPORT_FLAG + name
-    git.backport_patch([commit], target, name)
+    git.backport_patch(commit, target, name)
+
+
+@backport.command()
+@click.argument("name", required=True)
+@click.argument("branches", nargs=-1, required=True)
+@click.pass_context
+def branch(ctx, name, branches):
+    """ Backport a patch name backwards between the specified branches.
+
+    NAME        Refers to the name of the patch without any prefixes.
+    BRANCHES    Refers to the name of two or more consecutive branches (odoo series).
+    """
+    git = ctx.obj["GIT"]
+    git.backport_patches(name=name)
 
 
 if __name__ == "__main__":
