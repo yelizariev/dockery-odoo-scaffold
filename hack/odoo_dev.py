@@ -195,12 +195,12 @@ class Git(object):
                 click.secho(
                     "BACKPORT: %s - Backporting branch ..." % backport, fg="cyan"
                 )
-                commits = self.cherry(backport, from_series)
+                commits = self.cherry(backport, self.remote + "/" + from_series)
                 backport_name = self._backport_name(
                     backport, from_series, to_series
                 )
                 staging_backport_name = self._get_staging_name(backport_name)
-                self.checkout(to_series, staging_backport_name)
+                self.checkout(self.remote + "/" + to_series, staging_backport_name)
                 if self.cherry_pick(commits):
                     click.secho(
                         "BACKPORT: %s - Pushing ..." % backport_name, fg="cyan"
@@ -210,7 +210,7 @@ class Git(object):
                 self.run(["branch", "-D", staging_backport_name])
 
     def backport_patch(self, refspec, target, name):
-        candidate = self.remote + "/" + name,
+        candidate = self.remote + "/-" + name,
         backport_name = self._backport_name(
              candidate, "", target, tag="COMMIT")
         staging_backport_name = self._get_staging_name(backport_name)
@@ -258,7 +258,7 @@ class Git(object):
 
     def _backport_name(self, candidate, source, target, tag="BRANCH"):
         return candidate.replace(
-            self.remote + "/" + source,
+            self.remote + "/" + source + "-",
             self.remote + "/" + target + "-" + BACKPORT_FLAG + "-" + tag + "-")
 
 @click.group()
@@ -289,7 +289,7 @@ def main(ctx, git_dir, remote):
 )
 @click.argument("branches", nargs=-1, required=True)
 @click.pass_context
-def maintain(ctx, update, rebase, backport, compile_branch, auto, branches):
+def maintain(ctx, update, rebase, compile_branch, auto, branches):
     """ Run maintenance operations on remote development repository.
     """
     git = ctx.obj["GIT"]
@@ -328,7 +328,7 @@ def commit(ctx, commit, target, name):
 
 
 @backport.command()
-@click.argument("name", required=True)
+@click.argument("name", nargs=1, required=True)
 @click.argument("branches", nargs=-1, required=True)
 @click.pass_context
 def branch(ctx, name, branches):
@@ -338,6 +338,7 @@ def branch(ctx, name, branches):
     BRANCHES    Refers to the name of two or more consecutive branches (odoo series).
     """
     git = ctx.obj["GIT"]
+    git._add_branches(list(branches))
     git.backport_patches(name=name)
 
 
