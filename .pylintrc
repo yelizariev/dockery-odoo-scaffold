@@ -54,12 +54,14 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 disable=bad-continuation, # TODO: enable after issue will be solved https://github.com/PyCQA/pylint/issues/289
+        import-error, # No local environment available for pylint
+        protected-access, # This is just too common in Odoo
         #
         # odoo_lint specific messages
         #
-        manifest-required-author, # We has different authors
+        manifest-required-author, # We have different authors
         no-utf8-coding-comment, # We used only Python 3.x
-        license-allowed # License not only free for TIE
+        license-allowed # License not only free
 
 
 # Enable the message, report, category or checker with the given id(s). You can
