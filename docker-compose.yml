@@ -24,7 +24,7 @@ x-odoo:
   - ./vendor/odoo/cc/addons:/opt/odoo/addons/000:ro
   - ./vendor/odoo/ee:/opt/odoo/addons/001:ro
   # Current migration instructions
-  - .migrations.yaml:/.migrations.yaml:ro
+  - .migration.yml:/opt/odoo/.migration.yml:ro
 
 secrets:
   adminpwd:
@@ -112,7 +112,7 @@ services:
   migrate:
     << : *default-odoo
     depends_on: ['postgres', 'wdb']
-    entrypoint: ['/entrypoint.sh', 'dodoo', 'migrate', '-f', '/.migrations.yaml']
+    entrypoint: ['/entrypoint.sh', 'migrate-dev-wrapper']
     command: []
 
 # ------------------------
