@@ -34,8 +34,8 @@ build: chmod-scripts
 no-cache-build: chmod-scripts
 	env $(ENV) hack/build_images.py --nocache
 
-patch: chmod-scripts
-	env $(ENV) hack/apply_patches.py
+patch:
+	docker-compose run apply-patches
 
 
 faq:

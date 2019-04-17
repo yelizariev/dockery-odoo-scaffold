@@ -6,7 +6,7 @@ x-odoo:
   &add-additional-volumes
   volumes:
   # Put additional volumes here
-  {{ VOLUMES }}
+  - ./.gitignore:/.gitignore:ro
 
 services:
   odoo:
