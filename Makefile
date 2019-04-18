@@ -33,20 +33,29 @@ update:
 
 ### docker-compose shortcuts, nothing exciting.
 
+PARAMS := scaffold shell tests migrate
+# If the first argument is "run"...
+ifneq ($(filter $(firstword $(MAKECMDGOALS)),$(PARAMS)),)
+  # use the rest as arguments for "run"
+  RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  # ...and turn them into do-nothing targets
+  $(eval $(RUN_ARGS):;@:)
+endif
+
 run:
 	docker-compose up odoo
 
 scaffold:
-	docker-compose run scaffold
+	docker-compose run scaffold $(RUN_ARGS)
 
 shell:
-	docker-compose run shell
+	docker-compose run shell $(RUN_ARGS)
 
 tests:
-	docker-compose run tests
+	docker-compose run tests $(RUN_ARGS)
 
 migrate:
-	docker-compose run migrate
+	docker-compose run migrate $(RUN_ARGS)
 
 
 
@@ -73,6 +82,7 @@ build-devops:
 	docker build --tag $(IMAGE):devops-$(ODOO_VERSION)  --build-arg "FROM_IMAGE=$(FROM):$(ODOO_VERSION)-devops" .
 
 build-base-docs:
+	@echo "---------------------------------------------------------------------"
 	@echo "$(ccyellow)$(ccbold)$(cculine)Build the production image. It contains:$(ccend)$(ccyellow)$(ccbold)"
 	@echo "  - Odoo Community Code"
 	@echo "  - Odoo Enterprise Code (if configured)"
@@ -81,8 +91,10 @@ build-base-docs:
 	@echo "  - Customizations from the Dockerfile$(ccend)"
 	@echo "$(ccyellow)Note1: dockery-odoo patches are applied and baked into the image.$(ccend)"
 	@echo "$(ccyellow)Note2: running this again, docker's build cache might kick in.$(ccend)"
+	@echo "---------------------------------------------------------------------"
 
 build-devops-docs:
+	@echo "---------------------------------------------------------------------"
 	@echo "$(ccyellow)$(ccbold)$(cculine)Build the devops image as sibling to the production image.$(ccend)$(ccyellow)$(ccbold)"
 	@echo "  - WDB for comfortable debugging."
 	@echo "  - XOE's dodoo suite of DevOps extensions."
@@ -91,18 +103,21 @@ build-devops-docs:
 	@echo "  - For details, visit: https://git.io/fjOtu$(ccend)"
 	@echo "$(ccyellow)Note1: dockery-odoo patches are applied and baked into the image$(ccend)"
 	@echo "$(ccyellow)Note2: running this again, docker's build cache might kick in.$(ccend)"
+	@echo "---------------------------------------------------------------------"
 
 
 
 ### Patching operations
 
 patch-docs:
+	@echo "---------------------------------------------------------------------"
 	@echo "$(ccyellow)$(ccbold)$(cculine)Apply patches to your current working directory.$(ccend)$(ccyellow)$(ccbold)"
 	@echo "  - Patches are applied within the container context."
 	@echo "  - Host volumes are bind-mounted in read-write mode."
 	@echo "  - Therefore, changes reflect in your host's working directory."
 	@echo "  - Pay attention to the $(ccgreen)green texts$(ccyellow) to see which patch is applied where."
 	@echo "  - $(ccred)Failures$(ccyellow) indicate patches are already applied. No worries!$(ccend)"
+	@echo "---------------------------------------------------------------------"
 
 
 ### General info
