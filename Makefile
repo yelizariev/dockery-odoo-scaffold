@@ -21,10 +21,6 @@ endif
 
 ### Common repo maintenance
 
-init:
-	chmod -R +x hack
-	hack/init_repo.py
-
 create: pull build patch
 
 patch: patch-docs
