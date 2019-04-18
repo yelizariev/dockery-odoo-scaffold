@@ -193,7 +193,7 @@ def main(odoo_version, is_enterprise):
         call_cmd("sudo -k -H pip install pre-commit")
     call_cmd("pre-commit install")
 
-    click.echo("Next, run: " + yellow("`make create`"))
+    click.echo("Next, run: " + yellow("`make info`"))
 
 
 if __name__ == "__main__":
