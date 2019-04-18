@@ -10,9 +10,14 @@ ccend=$(if $(filter $(OS),Windows_NT),,$(shell    echo "\033[0m"))
 
 sleep := $(if $(filter $(OS),Windows_NT),timeout,sleep)
 
-ifndef COMPOSE_IMPERSONATION
-	COMPOSE_IMPERSONATION="$(shell id -u):$(shell id -g)"
+ifeq ($(OS),Windows_NT)
+	# Docker for Windows takes care of the user mapping.
+else
+	ifndef COMPOSE_IMPERSONATION
+		COMPOSE_IMPERSONATION="$(shell id -u):$(shell id -g)"
+	endif
 endif
+
 
 ### Common repo maintenance
 
