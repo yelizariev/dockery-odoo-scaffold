@@ -73,11 +73,25 @@ services:
 
 # ------------------------
 
+  redis:
+    image: 'redis:5.0-alpine'
+    # Set custom volumes and command for enable redis sentinel as desired
+
+# ------------------------
+
   odoo:
     << : *default-odoo
     entrypoint: ['/entrypoint.sh', '--dev', 'wdb,reload,qweb,werkzeug,xml']
     command: []
     depends_on: ['postgres', 'wdb']
+
+# ------------------------
+
+  odoo-redis:
+    << : *default-odoo
+    entrypoint: ['/entrypoint.sh', 'odoo-redis', '--dev', 'wdb,reload,qweb,werkzeug,xml']
+    command: []
+    depends_on: ['postgres', 'wdb', 'redis']
 
 # ========================
 
