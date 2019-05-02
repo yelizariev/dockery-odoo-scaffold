@@ -16,13 +16,12 @@ x-odoo:
   - odoo-testlogs:/var/lib/odoo-testlogs
   - odoo-dodoo-loader:/dodoo-loader
   # Host paths (config)
-  - .cfg-default.ini:/opt/odoo/cfg.d/01-default:ro
-  - .cfg-custom.ini:/opt/odoo/cfg.d/02-custom:ro
+  - ./cfg.d:/opt/odoo/cfg.d:ro  # ${ODOO_RC}
   # Host paths (source)
-  - ./src:/opt/odoo/src:ro
-  - ./vendor:/opt/odoo/vendor:ro
+  - ./src:/opt/odoo/src:ro  # ${ODOO_SRC}
+  - ./vendor:/opt/odoo/vendor:ro  # ${ODOO_VENDOR}
   # Current migration instructions
-  - .migration.yml:/opt/odoo/.migration.yml:ro
+  - migration.yml:/opt/odoo/migration.yml:ro  # ${ODOO_MIG}
 
 secrets:
   adminpwd:

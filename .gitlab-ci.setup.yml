@@ -93,43 +93,32 @@ stages:
   - pwd  # Orientation
   - ls -la  # Orientation
 
+  # Cleanup and set the testlogs artifact folder
   - rm -rf "${CI_PROJECT_DIR}/testlogs" || true
   - mkdir -p "${CI_PROJECT_DIR}/testlogs" && touch ${CI_PROJECT_DIR}/testlogs/{initlogs.txt,testlogs.txt}
-  - mkdir -p "${ODOO_BASEPATH}"
-  - mkdir -p "${ODOO_BASEPATH}/addons"
-  - mkdir -p "${ODOO_BASEPATH}/cfg.d"
-  - mkdir -p "/run/secrets/"
 
-  - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo-bin" "${ODOO_BASEPATH}/odoo-bin"
-  - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/odoo"     "${ODOO_BASEPATH}/odoo"
-  - ln -s "${CI_PROJECT_DIR}/vendor/odoo/cc/addons"   "${ODOO_BASEPATH}/addons/000"
-  - ln -s "${CI_PROJECT_DIR}/vendor/odoo/ee"          "${ODOO_BASEPATH}/addons/001"
-  - ln -s "${CI_PROJECT_DIR}/src"                     "${ODOO_BASEPATH}/addons/090"
-  - ln -s "${CI_PROJECT_DIR}/.cfg-default.ini"        "${ODOO_BASEPATH}/cfg.d/01-default"
-  - ln -s "${CI_PROJECT_DIR}/.cfg-custom-ci.ini"      "${ODOO_BASEPATH}/cfg.d/02-custom"
-  - |
-    if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then
-       ln -s "${CI_PROJECT_DIR}/.adminpwd"     /run/secrets/adminpwd;
-    fi
+  # Apply DockeryOdoo patches from the CI runtime image in case checked-in odoo
+  # does not already contain it fail gracefully, if it does.
+  - /patches /opt/odoo/patches.d || true
 
-  # Symlink vendored modules
-  # - ln -s "${CI_PROJECT_DIR}/vendor/xoe/stack-modules"            "${ODOO_BASEPATH}/addons/011"
-  # - ln -s "${CI_PROJECT_DIR}/vendor/xoe/improvements"             "${ODOO_BASEPATH}/addons/020"
-
-  # Apply patches in case checked in odoo does not already contain it
-  # fail gracefully, if it does.
-  - /patches $(pwd)/vendor/odoo/cc || true
-
+  # Prepare the runtime environment and construe addons paths
+  - if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then; export ODOO_ADMINPASSWORD_FILE="${CI_PROJECT_DIR}/.adminpwd"; fi
+  - export ODOO_BASEPATH="${CI_PROJECT_DIR}"
+  - source /entrypoint.d/05-set-appenv-ci.sh
   - source /entrypoint.d/10-set-appenv.sh
 
-  # Run with initlogs file config
-  - echo "${CUSTOM_CONFIG}" > .cfg-custom-ci.ini
-  - echo "logfile = ${CI_PROJECT_DIR}/testlogs/initlogs.txt" >> .cfg-custom-ci.ini
+  # Apply custom patches in case checked-in odoo
+  # does not already contain it fail gracefully, if it does.
+  - /patches || true
+
+  # Reset custom config and run with **initlogs** file config
+  - echo "${CUSTOM_CONFIG}" > "${ODOO_RC}/01-custom.ini"
+  - echo "logfile = ${CI_PROJECT_DIR}/testlogs/initlogs.txt" >> "${ODOO_RC}/01-custom.ini"
   - dodoo init -n "${ODOO_DB_NAME}"
 
-  # Run with testlogs file config
-  - echo "${CUSTOM_CONFIG}" > .cfg-custom-ci.ini
-  - echo "logfile = ${CI_PROJECT_DIR}/testlogs/testlogs.txt" >> .cfg-custom-ci.ini
+  # Reset custom config and run with **testlogs** file config
+  - echo "${CUSTOM_CONFIG}" > "${ODOO_RC}/01-custom.ini"
+  - echo "logfile = ${CI_PROJECT_DIR}/testlogs/testlogs.txt" >> "${ODOO_RC}/01-custom.ini"
 
 .builds:
   stage: Release
