@@ -21,7 +21,7 @@ x-odoo:
   - ./src:/opt/odoo/src:ro  # ${ODOO_SRC}
   - ./vendor:/opt/odoo/vendor:ro  # ${ODOO_VENDOR}
   # Current migration instructions
-  - migration.yml:/opt/odoo/migration.yml:ro  # ${ODOO_MIG}
+  - ./migration.yml:/opt/odoo/migration.yml:ro  # ${ODOO_MIG}
 
 secrets:
   adminpwd:
