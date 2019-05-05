@@ -15,3 +15,4 @@ exclude =
   .eggs/
 per-file-ignores =
   **/__init__.py:F401
+  ./migration.d/*.py:F821
