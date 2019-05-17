@@ -93,6 +93,9 @@ stages:
   - pwd  # Orientation
   - ls -la  # Orientation
 
+  # Prepare the runtime environment and construe addons paths
+  - export ODOO_BASEPATH="${CI_PROJECT_DIR}"
+
   # Cleanup and set the testlogs artifact folder
   - rm -rf "${CI_PROJECT_DIR}/testlogs" || true
   - mkdir -p "${CI_PROJECT_DIR}/testlogs" && touch ${CI_PROJECT_DIR}/testlogs/{initlogs.txt,testlogs.txt}
@@ -101,9 +104,7 @@ stages:
   # does not already contain it fail gracefully, if it does.
   - /patches /opt/odoo/patches.d || true
 
-  # Prepare the runtime environment and construe addons paths
   - if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then export ODOO_ADMINPASSWORD_FILE="${CI_PROJECT_DIR}/.adminpwd"; fi
-  - export ODOO_BASEPATH="${CI_PROJECT_DIR}"
   - source /entrypoint.d/05-set-appenv-ci.sh
   - source /entrypoint.d/10-set-appenv.sh
 
