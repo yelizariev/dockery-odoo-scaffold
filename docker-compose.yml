@@ -14,7 +14,7 @@ x-odoo:
   - odoo-data:/var/lib/odoo-persist
   - odoo-backup:/var/lib/odoo-backup
   - odoo-testlogs:/var/lib/odoo-testlogs
-  - odoo-dodoo-loader:/dodoo-loader
+  - odoo-dodoo-loader:/var/lib/dodoo-loader
   # Host paths (config)
   - ./cfg.d:/opt/odoo/cfg.d:ro  # ${ODOO_RC}
   # Host paths (source)
@@ -108,7 +108,7 @@ services:
   tests:
     << : *default-odoo
     depends_on: ['postgres', 'wdb']
-    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,qweb,werkzeug,xml', '--test-enable', '--without-demo=False', '--stop-after-init', '--logfile', '/testlogs/']
+    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,qweb,werkzeug,xml', '--test-enable', '--without-demo=False', '--stop-after-init', '--logfile', '/var/lib/odoo-testlogs/']
     command: []
 
 # ------------------------
