@@ -102,7 +102,7 @@ stages:
   - /patches /opt/odoo/patches.d || true
 
   # Prepare the runtime environment and construe addons paths
-  - if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then; export ODOO_ADMINPASSWORD_FILE="${CI_PROJECT_DIR}/.adminpwd"; fi
+  - if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then export ODOO_ADMINPASSWORD_FILE="${CI_PROJECT_DIR}/.adminpwd"; fi
   - export ODOO_BASEPATH="${CI_PROJECT_DIR}"
   - source /entrypoint.d/05-set-appenv-ci.sh
   - source /entrypoint.d/10-set-appenv.sh
