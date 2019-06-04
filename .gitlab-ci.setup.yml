@@ -72,7 +72,7 @@ stages:
     entrypoint: [""]
   tags: [image-builder]
   except:
-    refs: ['/^HOTFIX-.*$/', 'schedules']
+    refs: ['/^hotfix\/.*$/', 'schedules']
   stage: Test
   services:
   - postgres:latest
@@ -125,7 +125,7 @@ stages:
   stage: Release
   tags: [image-builder]
   except:
-    refs: ['/^HOTFIX-.*$/', 'schedules']
+    refs: ['/^hotfix\/.*$/', 'schedules']
   before_script:
   # Set the repo's environment
   - export $(egrep -v '^#' .env | xargs)
