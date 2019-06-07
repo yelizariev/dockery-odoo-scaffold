@@ -80,6 +80,7 @@ stages:
     paths:
     - testlogs
     expire_in: 1 week
+    when: on_failure
   variables:
     # You can alternatively use an external db connection:
     # Use the CUSTOM_CONFIG variable
