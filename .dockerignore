@@ -9,4 +9,5 @@ docker-compose.yml
 .adminpwd
 .gitlab-ci.yaml
 docker-compose.override.yml
-hack/*
+
+# Use this to exlude modules or languages (!) from the builds
