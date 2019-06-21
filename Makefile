@@ -76,10 +76,10 @@ pull-devops:
 build: build-base-docs build-base build-devops-docs build-devops
 
 build-base:
-	docker build --tag $(IMAGE):$(ODOO_VERSION)         --build-arg "FROM_IMAGE=$(FROM):$(FROM_VERSION)-$(ODOO_VERSION)" .
+	docker build --tag $(IMAGE):edge-$(ODOO_VERSION)         --build-arg "FROM_IMAGE=$(FROM):$(FROM_VERSION)-$(ODOO_VERSION)" .
 
 build-devops:
-	docker build --tag $(IMAGE):$(ODOO_VERSION)-devops  --build-arg "FROM_IMAGE=$(FROM):$(FROM_VERSION)-$(ODOO_VERSION)-devops" .
+	docker build --tag $(IMAGE):edge-$(ODOO_VERSION)-devops  --build-arg "FROM_IMAGE=$(FROM):$(FROM_VERSION)-$(ODOO_VERSION)-devops" .
 
 build-base-docs:
 	@echo "---------------------------------------------------------------------"

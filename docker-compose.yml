@@ -4,7 +4,7 @@ version: '3.4'
 x-odoo:
   &default-odoo
   tty: true  # Do not avoid json logging
-  image: "${IMAGE}:${ODOO_VERSION}-devops"
+  image: "${IMAGE}:edge-${ODOO_VERSION}-devops"
   ports: ['80:8069', '8072:8072']
   secrets:
     - source: adminpwd
@@ -147,7 +147,7 @@ services:
 
   apply-patches:
     tty: true  # Do not avoid json logging
-    image: "${IMAGE}:${ODOO_VERSION}-devops"
+    image: "${IMAGE}:edge-${ODOO_VERSION}-devops"
     volumes:
     - ./vendor:/opt/odoo/vendor
     user: "${COMPOSE_IMPERSONATION}"
