@@ -133,5 +133,11 @@ stages:
   - export $(egrep -v '^#' .env | xargs)
   script:
   - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
-  - ci-build.sh base "${CI_COMMIT_TAG:=${CI_PIPELINE_IID}}"
-  - ci-build.sh devops "${CI_COMMIT_TAG:=${CI_PIPELINE_IID}}"
+
+  - image="${IMAGE}:${CI_COMMIT_TAG:=${CI_PIPELINE_IID}}-${ODOO_VERSION}"
+  - fromimage="${FROM}:${FROM_VERSION}-${ODOO_VERSION}"
+
+  - docker build --tag "${image}" --build-arg FROM_IMAGE="${fromimage}" .
+  - docker push "${image}" &> /dev/null
+  - docker build --tag "${image}-devops" --build-arg FROM_IMAGE="${fromimage}-devops" .
+  - docker push "${image}-devops" &> /dev/null
