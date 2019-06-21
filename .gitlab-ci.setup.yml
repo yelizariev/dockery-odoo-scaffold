@@ -69,7 +69,7 @@ stages:
 .tests:
   image:
     # name: ${FROM}:${FROM_VERSION}-${ODOO_VERSION}-devops  # Set in Gitlab UI !!
-    name: xoelabs/dockery-odoo:latest-12.0-devops  # Adapt to image manually !!
+    name: xoelabs/dockery-odoo:edge-12.0-devops  # Adapt to image manually !!
     entrypoint: [""]
   tags: [image-builder]
   except:
