@@ -33,16 +33,16 @@ repos:
     hooks:
     - id: pyupgrade
 
--   repo: https://github.com/pre-commit/mirrors-pylint.git
-    rev: v2.3.1
-    hooks:
-    -   id: pylint
-        language_version: python3.6
-        entry: pylint
-        additional_dependencies: ['pylint_odoo==3.0.1']
-        exclude: >
-            (?x)^(
-                hack/.*|
-                migration.d/.*|
-                .*/tests/.*
-            )$
+# -   repo: https://github.com/pre-commit/mirrors-pylint.git
+#     rev: v2.3.1
+#     hooks:
+#     -   id: pylint
+#         language_version: python3.6
+#         entry: pylint
+#         additional_dependencies: ['pylint_odoo==3.0.1']
+#         exclude: >
+#             (?x)^(
+#                 hack/.*|
+#                 migration.d/.*|
+#                 .*/tests/.*
+#             )$
