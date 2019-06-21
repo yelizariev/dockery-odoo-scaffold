@@ -64,10 +64,10 @@ migrate:
 pull: pull-base pull-devops
 
 pull-base:
-	docker pull $(FROM):$(ODOO_VERSION)-base
+	docker pull $(FROM):$(FROM_VERSION)-$(ODOO_VERSION)
 
 pull-devops:
-	docker pull $(FROM):$(ODOO_VERSION)-devops
+	docker pull $(FROM):$(FROM_VERSION)-$(ODOO_VERSION)-devops
 
 
 
@@ -76,10 +76,10 @@ pull-devops:
 build: build-base-docs build-base build-devops-docs build-devops
 
 build-base:
-	docker build --tag $(IMAGE):base-$(ODOO_VERSION) --build-arg "FROM_IMAGE=$(FROM):$(ODOO_VERSION)-base" .
+	docker build --tag $(IMAGE):$(ODOO_VERSION)         --build-arg "FROM_IMAGE=$(FROM):$(FROM_VERSION)-$(ODOO_VERSION)" .
 
 build-devops:
-	docker build --tag $(IMAGE):devops-$(ODOO_VERSION)  --build-arg "FROM_IMAGE=$(FROM):$(ODOO_VERSION)-devops" .
+	docker build --tag $(IMAGE):$(ODOO_VERSION)-devops  --build-arg "FROM_IMAGE=$(FROM):$(FROM_VERSION)-$(ODOO_VERSION)-devops" .
 
 build-base-docs:
 	@echo "---------------------------------------------------------------------"
