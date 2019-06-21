@@ -29,7 +29,7 @@
 
 
 # Repaclace this with your custom ci image, if needed
-image: xoelabs/dockery-odoo:ci
+image: docker:latest
 variables:
   GIT_DEPTH: '50'
   GIT_STRATEGY: fetch
