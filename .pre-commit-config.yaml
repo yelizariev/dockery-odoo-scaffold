@@ -33,6 +33,12 @@ repos:
     hooks:
     - id: pyupgrade
 
+
+-   repo: https://github.com/xoe-labs/pre-commit
+    rev: v0.0.3  # Get the latest from: https://github.com/xoe-labs/pre-commit/releases
+    hooks:
+    - id: branch-name
+
 # -   repo: https://github.com/pre-commit/mirrors-pylint.git
 #     rev: v2.3.1
 #     hooks:
