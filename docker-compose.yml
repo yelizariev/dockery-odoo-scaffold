@@ -81,8 +81,8 @@ services:
 
   odoo:
     << : *default-odoo
-    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,reload,qweb,werkzeug,xml']
-    command: []
+    entrypoint: ['/entrypoint.sh']
+    command: ['--dev', 'wdb,reload,qweb,werkzeug,xml']
     depends_on: ['postgres', 'wdb']
 
 # ------------------------
