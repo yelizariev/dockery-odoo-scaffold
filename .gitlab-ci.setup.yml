@@ -18,14 +18,6 @@
 #   repository directly rather than checking them in into your source code.
 #
 # 5 Ensure test and migration stages use the correct runner image version
-#
-# TIPP: Jobs tagged with [image-builder] can be run on a worker
-#   that is set up with docker-socket binding instead of the dind service.
-#   Due to shared docker build context, this can dramatically speed up building
-#   jobs. Consider running this runner on a "build bastion" server. Don't use
-#   this technique for tests or migration, see:
-#   https://gitlab.com/gitlab-org/gitlab-ce/issues/41227#note_122331075
-#   TL;DR: It won't share the bind mounted volumes properly.
 
 
 # Repaclace this with your custom ci image, if needed
@@ -71,7 +63,6 @@ stages:
     # name: ${FROM}:${FROM_VERSION}-${ODOO_VERSION}-devops  # Set in Gitlab UI !!
     name: xoelabs/dockery-odoo:edge-12.0-devops  # Adapt to image manually !!
     entrypoint: [""]
-  tags: [image-builder]
   except:
     refs: ['/^hotfix\/.*$/', 'schedules']
   stage: Test
@@ -125,7 +116,6 @@ stages:
 
 .builds:
   stage: Release
-  tags: [image-builder]
   except:
     refs: ['/^hotfix\/.*$/', 'schedules']
   before_script:
