@@ -21,7 +21,7 @@ endif
 
 ### Common repo maintenance
 
-create: pull build patch
+create: pull patch build
 
 patch: patch-docs
 	docker-compose run apply-patches
