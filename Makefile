@@ -149,33 +149,38 @@ info:
 	@echo "Take your time. Go through the logs. And when you're ready..."
 	@echo ""
 	@sleep 5
+	@echo "$(ccbold)$(ccyellow)$(cculine)Useful alias for docker-comopose:$(ccend)"
+	@echo ""
+	@sleep 3
+	@echo "   $(ccyellow)alias dc=\"docker-compose\" $(ccgreen)"
+	@echo "   $(ccyellow)alias dcu=\"docker-compose up\" $(ccgreen)"
+	@echo "   $(ccyellow)alias dcd=\"docker-compose down\" $(ccgreen)"
+	@echo "   $(ccyellow)alias dcr=\"docker-compose up\" $(ccgreen)"
+	@echo ""
+	@sleep 5
 	@echo "$(ccbold)$(ccyellow)$(cculine)Kick off odoo:$(ccend)"
 	@echo ""
 	@sleep 3
-	@echo "   $(ccyellow)make run $(ccgreen)      ▸ your new homie"
-	@echo ""
-	@sleep 5
-	@echo "$(ccbold)$(ccyellow)$(cculine)Other useful maintenance commands:$(ccend)"
-	@echo ""
-	@sleep 3
-	@echo "   $(ccyellow)make create $(ccgreen)   ▸ rebuild your local environment"
-	@sleep 3
-	@echo "   $(ccyellow)make patch $(ccgreen)    ▸ patch your workdir"
-	@sleep 3
-	@echo "   $(ccyellow)make update $(ccgreen)   ▸ pull in scaffold changes"
+	@echo "   $(ccyellow)dcu odoo $(ccgreen)   ▸ your new homie"
+	@echo "   $(ccyellow)dcd $(ccgreen)        ▸ tear down"
 	@echo ""
 	@sleep 5
 	@echo "$(ccbold)$(ccyellow)$(cculine)Other useful odoo commands:$(ccend)"
 	@echo ""
-	@echo "   $(ccyellow)make scaffold $(ccgreen) ▸ scaffold a module"
-	@sleep 3
-	@echo "   $(ccyellow)make shell $(ccgreen)    ▸ access an odoo shell"
-	@sleep 3
-	@echo "   $(ccyellow)make tests $(ccgreen)    ▸ run your tests"
-	@sleep 3
-	@echo "   $(ccyellow)make migrate $(ccgreen)  ▸ test your migration scripts"
+	@echo "   $(ccyellow)dcr scaffold $(ccgreen)         ▸ scaffold a module"
+	@echo "   $(ccyellow)dcr shell $(ccgreen)            ▸ access an odoo shell"
+	@echo "   $(ccyellow)dcr dodoo pytests $(ccgreen)    ▸ run your pytests"
+	@echo "   $(ccyellow)dcr dodoo --help $(ccgreen)     ▸ say hello to dodoo"
 	@echo ""
-	@sleep 5
+	@sleep 8
+	@echo "$(ccbold)$(ccyellow)$(cculine)Other useful maintenance commands:$(ccend)"
+	@echo ""
+	@sleep 3
+	@echo "   $(ccyellow)make create $(ccgreen)   ▸ rebuild your local environment"
+	@echo "   $(ccyellow)make patch $(ccgreen)    ▸ patch your workdir"
+	@echo "   $(ccyellow)make update $(ccgreen)   ▸ pull in scaffold changes"
+	@echo ""
+	@sleep 8
 	@echo "$(ccbold)$(ccyellow)And there is more: have a look at ./Makefile and ./docker-compose.yml$(ccend)"
 	@echo ""
 	@echo "QED.    ▢"
