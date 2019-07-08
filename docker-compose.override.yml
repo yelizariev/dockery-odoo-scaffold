@@ -11,7 +11,11 @@ x-odoo:
 services:
   odoo:
     << : *add-additional-volumes
-  tests:
+  odoo-redis:
     << : *add-additional-volumes
-  shell:
+  dodoo:
+    << : *add-additional-volumes
+  scaffold:
+    << : *add-additional-volumes
+  tests:
     << : *add-additional-volumes
