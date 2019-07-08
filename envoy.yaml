@@ -1,0 +1,152 @@
+admin:
+  access_log_path: /dev/null
+  address:
+    socket_address: {address: 0.0.0.0, port_value: 9901}
+static_resources:
+  clusters:
+  - connect_timeout: 0.25s
+    hosts:
+    - socket_address: {address: odoo, port_value: 8069}
+    - socket_address: {address: odoo-redis, port_value: 8069}
+    lb_policy: round_robin
+    name: target_odoo
+    type: strict_dns
+  - connect_timeout: 0.25s
+    hosts:
+    - socket_address: {address: wdb, port_value: 1984}
+    lb_policy: round_robin
+    name: target_wdb
+    type: strict_dns
+  - connect_timeout: 0.25s
+    hosts:
+    - socket_address: {address: filebrowser, port_value: 80}
+    lb_policy: round_robin
+    name: target_filebrowser
+    type: strict_dns
+  - connect_timeout: 0.25s
+    hosts:
+    - socket_address: {address: smtpfake, port_value: 8025}
+    lb_policy: round_robin
+    name: target_smtpfake
+    type: strict_dns
+  - connect_timeout: 0.25s
+    dns_lookup_family: V4_ONLY
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: service_clouflare
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: {address: cdnjs.cloudflare.com, port_value: 80}
+    name: service_clouflare
+    type: logical_dns
+  - connect_timeout: 0.25s
+    dns_lookup_family: V4_ONLY
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: service_google_fonts
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: {address: fonts.googleapis.com, port_value: 80}
+    name: service_google_fonts
+    type: logical_dns
+  - connect_timeout: 0.25s
+    dns_lookup_family: V4_ONLY
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: service_google_fonts2
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: {address: fonts.gstatic.com, port_value: 80}
+    name: service_google_fonts2
+    type: logical_dns
+  - connect_timeout: 0.25s
+    dns_lookup_family: V4_ONLY
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: service_google
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: {address: www.google.com, port_value: 80}
+    name: service_google
+    type: logical_dns
+  - connect_timeout: 0.25s
+    dns_lookup_family: V4_ONLY
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: service_gravatar
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: {address: www.gravatar.com, port_value: 80}
+    name: service_gravatar
+    type: logical_dns
+  listeners:
+  - address:
+      socket_address: {address: 0.0.0.0, port_value: 80}
+    filter_chains:
+    - filters:
+      - config:
+          codec_type: auto
+          http_filters:
+          - {name: envoy.router}
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - domains: [mail.*]
+              name: local_service
+              routes:
+              - match: {prefix: /}
+                route: {cluster: target_smtpfake}
+            - domains: [wdb.*]
+              name: local_service
+              routes:
+              - match: {prefix: /}
+                route: {cluster: target_wdb}
+            - domains: [files.*]
+              name: local_service
+              routes:
+              - match: {prefix: /}
+                route: {cluster: target_filebrowser}
+            - domains: [odoo.*]
+              name: local_service
+              routes:
+              - match: {prefix: /}
+                route: {cluster: target_odoo}
+            - domains: [cdnjs.cloudflare.com]
+              name: local_service
+              routes:
+              - match: {prefix: /}
+                route: {cluster: service_clouflare}
+            - domains: [fonts.googleapis.com]
+              name: local_service
+              routes:
+              - match: {prefix: /}
+                route: {cluster: service_google_fonts}
+            - domains: [fonts.gstatic.com]
+              name: local_service
+              routes:
+              - match: {prefix: /}
+                route: {cluster: service_google_fonts2}
+            - domains: [www.google.com]
+              name: local_service
+              routes:
+              - match: {prefix: /}
+                route: {cluster: service_google}
+            - domains: [www.gravatar.com]
+              name: local_service
+              routes:
+              - match: {prefix: /}
+                route: {cluster: service_gravatar}
+          stat_prefix: ingress_http
+          upgrade_configs:
+          - {upgrade_type: websocket}
+        name: envoy.http_connection_manager

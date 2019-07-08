@@ -3,9 +3,9 @@ version: '3.4'
 
 x-odoo:
   &default-odoo
-  tty: true  # Do not avoid json logging
+  tty: true
   image: "${IMAGE}:edge-${ODOO_VERSION}-devops"
-  ports: ['80:8069', '8072:8072']
+  # ports: ['80:8069', '8072:8072']
   # Comment on layered projects
   environment:
     - ODOO_CMD=/opt/odoo/vendor/odoo/cc/odoo-bin
@@ -29,75 +29,69 @@ x-odoo:
   - ./migration.d:/opt/odoo/migration.d:ro  # ${ODOO_MIG_DIR}
 
 secrets:
-  adminpwd:
-    file: .adminpwd
-
+  adminpwd: {file: .adminpwd}
 volumes:
   odoo-data: {driver: local}
   odoo-backup: {driver: local}
   odoo-testlogs: {driver: local}
   odoo-dodoo-loader: {driver: local}
   psql: {driver: local}
-
+networks:
+  default: {internal: true}
+  public: null
 services:
-
-# ========================
-
-  filebrowser:
-    image: filebrowser/filebrowser
-    ports: ['8080:80']
-    command: ['--noauth']
-    volumes:
-      - odoo-data:/srv/data
-      - odoo-backup:/srv/backup
-      - odoo-testlogs:/srv/testlogs
-      - odoo-dodoo-loader:/srv/etl
-
-# ========================
-
-  wdb:
-    image: xoes/wdb-server
-    ports: ['1984:1984']
-
-# ------------------------
-
-  postgres:
-    image: 'postgres:alpine'
-    # 5432 might be taken by a locally running instance
+  db:
+    environment: [POSTGRES_USER=odoo, POSTGRES_PASSWORD=odoo, POSTGRES_DB=postgres]
+    image: postgres:alpine
     ports: ['5433:5432']
     volumes: ['psql:/var/lib/postgresql/data']
-    environment:
-      - POSTGRES_USER=odoo
-      - POSTGRES_PASSWORD=odoo
-      - POSTGRES_DB=postgres
-    networks:
-      default:
-        aliases:
-         - db
+  # http://filebrowser.localhost
+  filebrowser:
+    command: [--noauth]
+    image: filebrowser/filebrowser
+    volumes: ['odoo-data:/srv/data', 'odoo-backup:/srv/backup', 'odoo-testlogs:/srv/testlogs',
+      'odoo-dodoo-loader:/srv/etl']
+  proxy:
+    image: envoyproxy/envoy-alpine:v1.10.0
+    networks: {default: null, public: null}
+    ports: ['80:80']
+    volumes: ['./envoy.yaml:/etc/envoy/envoy.yaml']
+  redis: {image: 'redis:5.0-alpine'}
+  # http://mail.localhost
+  smtpfake: {image: mailhog/mailhog}
+  # http://wdb.localhost
+  wdb:
+    image: kozea/wdb:3.2.5
+    ports: ['1984:1984']
 
-# ------------------------
-
-  redis:
-    image: 'redis:5.0-alpine'
-    # Set custom volumes and command for enable redis sentinel as desired
-
-# ------------------------
-
+  # http://odoo.localhost
   odoo:
     << : *default-odoo
     entrypoint: ['/entrypoint.sh']
     command: ['--dev', 'wdb,reload,qweb,werkzeug,xml']
-    depends_on: ['postgres', 'wdb']
+    depends_on: ['db', 'wdb', 'proxy', 'smtpfake']
+    environment:
+      - WDB_SOCKET_SERVER=wdb
+      - WDB_SOCKET_PORT=19840
+      - WDB_WEB_SERVER=wdb.localhost
+      - WDB_WEB_PORT=80
 
-# ------------------------
-
+  # http://odoo.localhost
   odoo-redis:
     << : *default-odoo
     entrypoint: ['/entrypoint.sh', 'odoo-redis', '--dev', 'wdb,reload,qweb,werkzeug,xml']
     command: []
-    depends_on: ['postgres', 'wdb', 'redis']
+    depends_on: ['db', 'wdb', 'proxy', 'smtpfake', 'redis']
 
 # ========================
+
+  dodoo:
+    << : *default-odoo
+    depends_on: ['db', 'wdb']
+    entrypoint: ['/entrypoint.sh', 'dodoo']
+    command: []
+
+# ------------------------
 
   scaffold:
     << : *default-odoo
@@ -109,59 +103,20 @@ services:
 
 # ------------------------
 
-  tests:
-    << : *default-odoo
-    depends_on: ['postgres', 'wdb']
-    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,qweb,werkzeug,xml', '--test-enable', '--without-demo=False', '--stop-after-init', '--logfile', '/var/lib/odoo-testlogs/']
-    command: []
-
-# ------------------------
-
-  shell:
-    << : *default-odoo
-    depends_on: ['postgres', 'wdb']
-    entrypoint: ['/entrypoint.sh', 'shell']
-    command: []
-
-# ------------------------
-
-  migrate:
-    << : *default-odoo
-    depends_on: ['postgres', 'wdb']
-    entrypoint: ['/entrypoint.sh', 'migrate-dev-wrapper']
-    command: []
-
-# ------------------------
-
-  init:
-    << : *default-odoo
-    depends_on: ['postgres', 'wdb']
-    entrypoint: ['/entrypoint.sh', 'dodoo', 'init']
-    command: []
-
-# ------------------------
-
-  load:
-    << : *default-odoo
-    depends_on: ['postgres', 'wdb']
-    entrypoint: ['/entrypoint.sh', 'dodoo', 'load']
-    command: []
-
-# ------------------------
-
   apply-patches:
-    tty: true  # Do not avoid json logging
+    tty: true
     image: "${IMAGE}:edge-${ODOO_VERSION}-devops"
     volumes:
     - ./vendor:/opt/odoo/vendor
     user: "${COMPOSE_IMPERSONATION}"
     entrypoint: ['/patches']
     command: []
+    networks: [public]
 
 # ------------------------
 
-  # translate:
-  #   << : *default-odoo
-  #   depends_on: ['postgres', 'wdb']
-  #   entrypoint: ['/entrypoint.sh', 'translate']
-  #   command: []
+  tests:
+    << : *default-odoo
+    depends_on: ['db', 'wdb']
+    entrypoint: ['/entrypoint.sh', '--dev', 'wdb,qweb,werkzeug,xml', '--test-enable', '--without-demo=False', '--stop-after-init', '--logfile', '/var/lib/odoo-testlogs/']
+    command: []
