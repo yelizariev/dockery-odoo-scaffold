@@ -6,6 +6,10 @@ x-odoo:
   tty: true  # Do not avoid json logging
   image: "${IMAGE}:edge-${ODOO_VERSION}-devops"
   ports: ['80:8069', '8072:8072']
+  # Comment on layered projects
+  environment:
+    - ODOO_CMD=/opt/odoo/vendor/odoo/cc/odoo-bin
+    - ODOO_FRM=/opt/odoo/vendor/odoo/cc
   secrets:
     - source: adminpwd
       target: /run/secrets/adminpwd
