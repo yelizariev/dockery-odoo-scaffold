@@ -180,7 +180,16 @@ info:
 	@echo "   $(ccyellow)make patch $(ccgreen)    ▸ patch your workdir"
 	@echo "   $(ccyellow)make update $(ccgreen)   ▸ pull in scaffold changes"
 	@echo ""
-	@sleep 8
+	@sleep 5
+	@echo "$(ccbold)$(ccyellow)$(cculine)Common urls:$(ccend)"
+	@echo ""
+	@sleep 3
+	@echo "   $(ccyellow)http://odoo.localhost $(ccgreen)          ▸ odoo webapp"
+	@echo "   $(ccyellow)http://mail.localhost $(ccgreen)          ▸ mailhog mailsink"
+	@echo "   $(ccyellow)http://wdb.localhost $(ccgreen)           ▸ wdb debugger"
+	@echo "   $(ccyellow)http://filebrowser.localhost $(ccgreen)   ▸ volume browser, if enabled"
+	@echo ""
+	@sleep 5
 	@echo "$(ccbold)$(ccyellow)And there is more: have a look at ./Makefile and ./docker-compose.yml$(ccend)"
 	@echo ""
 	@echo "QED.    ▢"
