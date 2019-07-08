@@ -95,23 +95,23 @@ services:
 
   scaffold:
     << : *default-odoo
-    user: "${COMPOSE_IMPERSONATION}"
-    entrypoint: ['/entrypoint.sh', 'scaffold']
     command: []
-    volumes:
-    - ./src:/opt/odoo/src
+    entrypoint: [/entrypoint.sh, scaffold]
+    user: ${COMPOSE_IMPERSONATION}
+    volumes: ['./src:/opt/odoo/src', './vendor:/opt/odoo/vendor:ro']
+
 
 # ------------------------
 
   apply-patches:
-    tty: true
-    image: "${IMAGE}:edge-${ODOO_VERSION}-devops"
-    volumes:
-    - ./vendor:/opt/odoo/vendor
-    user: "${COMPOSE_IMPERSONATION}"
-    entrypoint: ['/patches']
     command: []
+    entrypoint: [/patches]
+    image: ${IMAGE}:edge-${ODOO_VERSION}-devops
     networks: [public]
+    tty: true
+    user: ${COMPOSE_IMPERSONATION}
+    volumes: ['./vendor:/opt/odoo/vendor']
+
 
 # ------------------------
 
