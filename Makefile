@@ -158,7 +158,7 @@ info:
 	@echo "   $(ccyellow)http://odoo.localhost $(ccgreen)          ▸ odoo webapp"
 	@echo "   $(ccyellow)http://mail.localhost $(ccgreen)          ▸ mailhog mailsink"
 	@echo "   $(ccyellow)http://wdb.localhost $(ccgreen)           ▸ wdb debugger"
-	@echo "   $(ccyellow)http://filebrowser.localhost $(ccgreen)   ▸ volume browser, if enabled"
+	@echo "   $(ccyellow)http://files.localhost $(ccgreen)         ▸ volume browser, if enabled"
 	@echo ""
 	@sleep 5
 	@echo "$(ccbold)$(ccyellow)And there is more: have a look at ./Makefile and ./docker-compose.yml$(ccend)"
