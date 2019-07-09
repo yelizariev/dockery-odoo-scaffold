@@ -21,42 +21,13 @@ endif
 
 ### Common repo maintenance
 
-create: pull patch build
+create: pull build patch build
 
 patch: patch-docs
 	docker-compose run apply-patches
 
 update:
 	git pull scaffold master
-
-
-
-### docker-compose shortcuts, nothing exciting.
-
-PARAMS := scaffold shell tests migrate
-# If the first argument is "run"...
-ifneq ($(filter $(firstword $(MAKECMDGOALS)),$(PARAMS)),)
-  # use the rest as arguments for "run"
-  RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  # ...and turn them into do-nothing targets
-  $(eval $(RUN_ARGS):;@:)
-endif
-
-run:
-	docker-compose up odoo
-
-scaffold:
-	docker-compose run scaffold $(RUN_ARGS)
-
-shell:
-	docker-compose run shell $(RUN_ARGS)
-
-tests:
-	docker-compose run tests $(RUN_ARGS)
-
-migrate:
-	docker-compose run migrate $(RUN_ARGS)
-
 
 
 ### Pulling images
