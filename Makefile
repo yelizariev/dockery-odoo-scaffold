@@ -126,7 +126,7 @@ info:
 	@echo "   $(ccyellow)alias dc=\"docker-compose\" $(ccgreen)"
 	@echo "   $(ccyellow)alias dcu=\"docker-compose up\" $(ccgreen)"
 	@echo "   $(ccyellow)alias dcd=\"docker-compose down\" $(ccgreen)"
-	@echo "   $(ccyellow)alias dcr=\"docker-compose up\" $(ccgreen)"
+	@echo "   $(ccyellow)alias dcr=\"docker-compose run\" $(ccgreen)"
 	@echo ""
 	@sleep 5
 	@echo "$(ccbold)$(ccyellow)$(cculine)Kick off odoo:$(ccend)"
