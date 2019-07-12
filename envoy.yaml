@@ -13,6 +13,12 @@ static_resources:
     type: strict_dns
   - connect_timeout: 0.25s
     hosts:
+    - socket_address: {address: odoo, port_value: 8072}
+    lb_policy: round_robin
+    name: target_odoo_longpolling
+    type: strict_dns
+  - connect_timeout: 0.25s
+    hosts:
     - socket_address: {address: wdb, port_value: 1984}
     lb_policy: round_robin
     name: target_wdb
@@ -119,6 +125,8 @@ static_resources:
             - domains: [odoo.*]
               name: local_service
               routes:
+              - match: {prefix: /longpolling/}
+                route: {cluster: target_odoo_longpolling, timeout: 90s}
               - match: {prefix: /}
                 route: {cluster: target_odoo}
             - domains: [cdnjs.cloudflare.com]
