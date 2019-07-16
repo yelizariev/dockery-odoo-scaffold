@@ -53,7 +53,19 @@ services:
       'odoo-dodoo-loader:/srv/etl']
   proxy:
     image: envoyproxy/envoy-alpine:v1.10.0
-    networks: {default: null, public: null}
+    networks:
+      default:
+        aliases:
+        # For odoo to reach wkhtml from within the private network
+        # Through the proxy: see envoy.yaml
+        - odoo.localhost
+        # See envoy.yaml
+        - cdnjs.cloudflare.com
+        - fonts.googleapis.com
+        - fonts.gstatic.com
+        - google.com
+        - gravatar.com
+      public: null
     ports: ['80:80']
     volumes: ['./envoy.yaml:/etc/envoy/envoy.yaml']
   redis: {image: 'redis:5.0-alpine'}
