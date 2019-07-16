@@ -119,48 +119,45 @@ info:
 	@sleep 3
 	@echo "Take your time. Go through the logs. And when you're ready..."
 	@echo ""
-	@sleep 5
+	make help
+
+help:
 	@echo "$(ccbold)$(ccyellow)$(cculine)Useful alias for docker-comopose:$(ccend)"
 	@echo ""
-	@sleep 3
 	@echo "   $(ccyellow)alias dc=\"docker-compose\" $(ccgreen)"
 	@echo "   $(ccyellow)alias dcu=\"docker-compose up\" $(ccgreen)"
 	@echo "   $(ccyellow)alias dcd=\"docker-compose down\" $(ccgreen)"
 	@echo "   $(ccyellow)alias dcr=\"docker-compose run\" $(ccgreen)"
 	@echo ""
-	@sleep 5
 	@echo "$(ccbold)$(ccyellow)$(cculine)Kick off odoo:$(ccend)"
 	@echo ""
-	@sleep 3
-	@echo "   $(ccyellow)dcu odoo $(ccgreen)   ▸ your new homie"
-	@echo "   $(ccyellow)dcd $(ccgreen)        ▸ tear down"
+	@echo "   $(ccyellow)dcu odoo $(ccgreen)   ▸ start up odoo service"
+	@echo "   $(ccyellow)dcd $(ccgreen)        ▸ tear down project"
 	@echo ""
-	@sleep 5
 	@echo "$(ccbold)$(ccyellow)$(cculine)Other useful odoo commands:$(ccend)"
 	@echo ""
-	@echo "   $(ccyellow)dcr scaffold $(ccgreen)         ▸ scaffold a module"
-	@echo "   $(ccyellow)dcr shell $(ccgreen)            ▸ access an odoo shell"
-	@echo "   $(ccyellow)dcr dodoo pytests $(ccgreen)    ▸ run your pytests"
-	@echo "   $(ccyellow)dcr dodoo --help $(ccgreen)     ▸ say hello to dodoo"
+	@echo "   $(ccyellow)dcr odoo -d <DB> -u <MOD>$(ccgreen)   ▸ standard odoo"
+	@echo "   $(ccyellow)dcr scaffold $(ccgreen)               ▸ scaffold a module"
+	@echo "   $(ccyellow)dcr shell $(ccgreen)                  ▸ access an odoo shell"
+	@echo "   $(ccyellow)dcr dodoo pytests $(ccgreen)          ▸ run your pytests"
+	@echo "   $(ccyellow)dcr dodoo --help $(ccgreen)           ▸ say hello to dodoo"
 	@echo ""
-	@sleep 8
 	@echo "$(ccbold)$(ccyellow)$(cculine)Other useful maintenance commands:$(ccend)"
 	@echo ""
-	@sleep 3
-	@echo "   $(ccyellow)make create $(ccgreen)   ▸ rebuild your local environment"
+	@echo "   $(ccyellow)make help $(ccgreen)     ▸ this little cheatsheet"
+	@echo "   $(ccyellow)make create $(ccgreen)   ▸ rebuild your environment"
+	@echo "   $(ccyellow)make pull $(ccgreen)     ▸ pull from images"
+	@echo "   $(ccyellow)make build $(ccgreen)    ▸ build your images"
 	@echo "   $(ccyellow)make patch $(ccgreen)    ▸ patch your workdir"
 	@echo "   $(ccyellow)make update $(ccgreen)   ▸ pull in scaffold changes"
 	@echo ""
-	@sleep 5
 	@echo "$(ccbold)$(ccyellow)$(cculine)Common urls:$(ccend)"
 	@echo ""
-	@sleep 3
 	@echo "   $(ccyellow)http://odoo.localhost $(ccgreen)          ▸ odoo webapp"
 	@echo "   $(ccyellow)http://mail.localhost $(ccgreen)          ▸ mailhog mailsink"
 	@echo "   $(ccyellow)http://wdb.localhost $(ccgreen)           ▸ wdb debugger"
 	@echo "   $(ccyellow)http://files.localhost $(ccgreen)         ▸ volume browser, if enabled"
 	@echo ""
-	@sleep 5
 	@echo "$(ccbold)$(ccyellow)And there is more: have a look at ./Makefile and ./docker-compose.yml$(ccend)"
 	@echo ""
 	@echo "QED.    ▢"
