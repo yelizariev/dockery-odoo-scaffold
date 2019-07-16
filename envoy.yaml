@@ -127,12 +127,19 @@ static_resources:
               routes:
               - match: {prefix: /longpolling/}
                 route: {
-                  cluster: target_odoo_longpolling, 
+                  cluster: target_odoo_longpolling,
                   # odoo keeps longpolling requests for 50s max
                   timeout: 55s
                 }
               - match: {prefix: /}
-                route: {cluster: target_odoo}
+                route: {
+                    cluster: target_odoo,
+                    # odoo has implemented a blocking UI
+                    # 15s is hardly enough, but expose bad design.
+                    # NOT FOR PRODUCTION!!!
+                    # consider using OCA/queue
+                    timeout: 15s
+                }
             - domains: [cdnjs.cloudflare.com]
               name: local_service
               routes:
