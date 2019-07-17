@@ -15,26 +15,26 @@ Test-Weekly:
   script:
   - dodoo test -d "${ODOO_DB_NAME}" -i account,hr_payroll_account
 
-Migrate-Staged-DBs:
-  extends: .tests
-  only: [tags]
-  stage: Stage
-  variables:
-    STAGED_DBS: "database1 database2 database3"
-    CUSTOM_CONFIG: |
-      [options]
-      db_host = <postgreshost.tld>
-      db_port = 5432
-      db_user = odoo
-      db_password = <$GITLABCIVARIABLE>
-      dbfilter = ^.*$
-  script:
-  - |
-      for db in ${STAGED_DBS}; do
-        dodoo migrate \
-          -d "${db}" \
-          -f ./.migration.yml
-      done
+# Migrate-Staged-DBs:
+#   extends: .tests
+#   only: [tags]
+#   stage: Stage
+#   variables:
+#     STAGED_DBS: "database1 database2 database3"
+#     CUSTOM_CONFIG: |
+#       [options]
+#       db_host = <postgreshost.tld>
+#       db_port = 5432
+#       db_user = odoo
+#       db_password = <$GITLABCIVARIABLE>
+#       dbfilter = ^.*$
+#   script:
+#   - |
+#       for db in ${STAGED_DBS}; do
+#         dodoo migrate \
+#           -d "${db}" \
+#           -f ./.migration.yml
+#       done
 
 
 Build-Twins:
