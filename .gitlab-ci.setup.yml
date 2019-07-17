@@ -122,7 +122,7 @@ stages:
   # Set the repo's environment
   - export $(egrep -v '^#' .env | xargs)
   script:
-  - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+  - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
 
   - image="${IMAGE}:${CI_COMMIT_REF_NAME}-${ODOO_VERSION}"
   - fromimage="${FROM}:${FROM_VERSION}-${ODOO_VERSION}"
