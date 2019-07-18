@@ -53,6 +53,7 @@ build-devops:
 	docker build --tag $(IMAGE):edge-$(ODOO_VERSION)-devops  --build-arg "FROM_IMAGE=$(FROM):$(FROM_VERSION)-$(ODOO_VERSION)-devops" .
 
 lint-all:
+	git config commit.template $(pwd)/.git-commit-template
 	pre-commit install --hook-type pre-commit
 	pre-commit install --hook-type commit-msg
 	pre-commit install --install-hooks

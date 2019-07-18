@@ -1,0 +1,35 @@
+# <type>(<scope>): (If applied, this commit will...) <subject> (Max 72 char)
+# |<----   Preferably using up to 50 chars   --->|<------------------->|
+# Example:
+# chore(scaffold): incorporate latest changes
+
+# (Optional) Explain why this change is being made
+# |<----   Try To Limit Each Line to a Maximum Of 72 Characters   ---->|
+
+# (Optional) Provide links to further resources, like issues, tickets, tasks, etc.
+# Example:
+# Closes #23, Part of [45], Solving [!67]
+
+# --- COMMIT END ---
+# Type can be
+#    feat     (new feature)
+#    fix      (bug fix)
+#    refactor (refactoring; no functional change)
+#    style    (formatting; no code change)
+#    doc      (changes to documentation)
+#    test     (adding or refactoring tests; no production code change)
+#    runtime  (modifying the runtime environment)
+#    chore    (changes to tooling; no code change)
+#    mig      (adding or refactoring migrations; no production code change)
+#    revert   (revert erroneous comits of any kind)
+#    hack     (temporary fix to make things move forward; please avoid it)
+#
+# --------------------
+# Remember to:
+#   * write all lower case
+#   * use the imperative mood in the subject line
+#   * do not end the subject line with a period
+#   * separate subject from body with a blank line
+#   * use the body to explain what and why (intent) vs. how
+#   * can use multiple lines with "-" or "*" for bullet points in body
+# --------------------

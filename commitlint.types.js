@@ -20,33 +20,17 @@ module.exports = {
             2,
             'always',
             [
-                // Changes that affect the build or external
-                // dependencies (example: modification to Dockerfile)
-                'builds',
-                // Changes to the build process or auxiliary tools and
-                // libraries such as documentation generation
-                'chore',
-                // Changes to our CI configuration files and scripts
-                'ci',
-                // Documentation only changes
-                'docs',
-                // A new feature
-                'feat',
-                // A migration script
-                'mig',
-                // A bug fix
-                'fix',
-                // A code change that improves performance
-                'perf',
-                // A code change that neither fixes a bug nor adds a feature
-                'refactor',
-                // Reverting erroneous commmit(s)
-                'revert',
-                // Changes that do not affect the meaning of the code
-                // (white-space, formatting, missing semi-colons, etc)
-                'style',
-                // Adding missing tests or correcting existing tests
-                'test'
+                'fix',       // bug fix
+                'feat',      // new feature
+                'refactor',  // refactoring; no functional change
+                'style',     // formatting; no code change
+                'docs',      // changes to documentation
+                'test',      // adding or refactoring tests; no production code change
+                'runtime',   // modifying the runtime environment
+                'chore',     // changes to tooling; no code change
+                'mig',       // adding or refactoring migrations; no production code change
+                'revert',    // revert erroneous comits of any kind
+                'hack',      // temporary fix to make things move forward; please avoid it
             ]
         ]
     }
