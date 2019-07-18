@@ -9,12 +9,14 @@ static_resources:
     - socket_address: {address: odoo, port_value: 8069}
     - socket_address: {address: odoo-redis, port_value: 8069}
     lb_policy: round_robin
+    max_requests_per_connection: 1
     name: target_odoo
     type: strict_dns
   - connect_timeout: 0.25s
     hosts:
     - socket_address: {address: odoo, port_value: 8072}
     lb_policy: round_robin
+    max_requests_per_connection: 1
     name: target_odoo_longpolling
     type: strict_dns
   - connect_timeout: 0.25s
