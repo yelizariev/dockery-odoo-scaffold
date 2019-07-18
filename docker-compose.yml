@@ -44,6 +44,7 @@ services:
     environment: [POSTGRES_USER=odoo, POSTGRES_PASSWORD=odoo, POSTGRES_DB=postgres]
     image: postgres:alpine
     ports: ['5433:5432']
+    networks: {default: null, public: null}
     volumes: ['psql:/var/lib/postgresql/data']
   # http://filebrowser.localhost
   filebrowser:
