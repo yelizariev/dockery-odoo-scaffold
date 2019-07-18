@@ -52,6 +52,12 @@ build-base:
 build-devops:
 	docker build --tag $(IMAGE):edge-$(ODOO_VERSION)-devops  --build-arg "FROM_IMAGE=$(FROM):$(FROM_VERSION)-$(ODOO_VERSION)-devops" .
 
+lint-all:
+	pre-commit install --hook-type pre-commit
+	pre-commit install --hook-type commit-msg
+	pre-commit install --install-hooks
+	pre-commit run --all
+
 build-base-docs:
 	@echo "---------------------------------------------------------------------"
 	@echo "$(ccyellow)$(ccbold)$(cculine)Build the production image. It contains:$(ccend)$(ccyellow)$(ccbold)"
@@ -150,6 +156,7 @@ help:
 	@echo "   $(ccyellow)make build $(ccgreen)    ▸ build your images"
 	@echo "   $(ccyellow)make patch $(ccgreen)    ▸ patch your workdir"
 	@echo "   $(ccyellow)make update $(ccgreen)   ▸ pull in scaffold changes"
+	@echo "   $(ccyellow)make lint-all $(ccgreen) ▸ apply pre-commit linting"
 	@echo ""
 	@echo "$(ccbold)$(ccyellow)$(cculine)Common urls:$(ccend)"
 	@echo ""
