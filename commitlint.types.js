@@ -4,8 +4,15 @@ module.exports = {
             1,  // You can enforce this by setting this value to 2
             'always',
             [
+                // Updates from the dockery-odoo-scaffold repo.
+                // Use with `chore` type.
+                'scaffold',
+                // Occasional manipulations in the vendor context.
+                // Changes should be done upstream + including patch here.
+                'vendor',
                 // You should define them per project organizing around
-                // higher level the core concepts within your project
+                // higher level the core concepts within your project.
+                // Example: modules or general design concepts used in your src.
                 'please-define-in-project-commitlint.types.js'
             ]
         ],
@@ -25,6 +32,8 @@ module.exports = {
                 'docs',
                 // A new feature
                 'feat',
+                // A migration script
+                'mig',
                 // A bug fix
                 'fix',
                 // A code change that improves performance
