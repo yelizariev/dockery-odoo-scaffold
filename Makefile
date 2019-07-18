@@ -52,8 +52,8 @@ build-base:
 build-devops:
 	docker build --tag $(IMAGE):edge-$(ODOO_VERSION)-devops  --build-arg "FROM_IMAGE=$(FROM):$(FROM_VERSION)-$(ODOO_VERSION)-devops" .
 
-lint-all:
-	git config commit.template $(pwd)/.git-commit-template
+lint:
+	git config commit.template $(shell pwd)/.git-commit-template
 	pre-commit install --hook-type pre-commit
 	pre-commit install --hook-type commit-msg
 	pre-commit install --install-hooks
@@ -159,7 +159,7 @@ help:
 	@echo "   $(ccyellow)make build $(ccgreen)                     ▸ build your images"
 	@echo "   $(ccyellow)make patch $(ccgreen)                     ▸ patch your workdir"
 	@echo "   $(ccyellow)make update $(ccgreen)                    ▸ pull in scaffold changes"
-	@echo "   $(ccyellow)make lint-all $(ccgreen)                  ▸ apply pre-commit linting"
+	@echo "   $(ccyellow)make lint $(ccgreen)                      ▸ apply pre-commit linting"
 	@echo ""
 	@echo "$(ccbold)$(ccyellow)$(cculine)Git Cheatsheet:$(ccend)"
 	@echo ""
