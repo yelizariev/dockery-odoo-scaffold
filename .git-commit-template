@@ -1,16 +1,29 @@
-# <type>(<scope>): (If applied, this commit will...) <subject> (Max 72 char)
-# |<----   Preferably using up to 50 chars   --->|<------------------->|
+
+#
+# ------------------   Header   --------------- >|< ----- n/a ------- >|
+#
+# ------------------   Body (optional)   ---------------------------- >|
+#
+# ------------------   Footer (optional)   -------------------------- >|
+#
+#
+# Header spec:
+#
+#    <type>(<scope>): (This commit will...) <commit action>
+#
+#
 # Example:
-# chore(scaffold): incorporate latest changes
-
-# (Optional) Explain why this change is being made
-# |<----   Try To Limit Each Line to a Maximum Of 72 Characters   ---->|
-
-# (Optional) Provide links to further resources, like issues, tickets, tasks, etc.
-# Example:
-# Closes #23, Part of [45], Solving [!67]
-
-# --- COMMIT END ---
+#
+#    chore(scaffold): pull new commit tmpl
+#
+#    Before this, it was hard for people to understand the importance of
+#    commit discipline for creating high quality software and keep
+#    efficiency high. With commitlint, the team can standardize on a
+#    structured common language to get everyone on the same page.
+#
+#    Closes #123, Part of [345], Solves ![657]
+#
+#
 # Type can be
 #    feat     (new feature)
 #    fix      (bug fix)
