@@ -27,6 +27,7 @@ patch: patch-docs
 	docker-compose run apply-patches
 
 update:
+	git remote add scaffold https://github.com/xoe-labs/dockery-odoo-scaffold.git 2> /dev/null || true
 	git pull scaffold master
 
 
