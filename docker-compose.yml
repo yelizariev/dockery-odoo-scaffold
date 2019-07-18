@@ -115,8 +115,21 @@ services:
     user: ${COMPOSE_IMPERSONATION}
     volumes: ['./src:/opt/odoo/src', './vendor:/opt/odoo/vendor:ro']
 
+# ------------------------
+
+  init:
+    << : *default-odoo
+    command: ['-nDockeryOdoo', '-mmail']
+    entrypoint: [/entrypoint.sh, dodoo, init]
 
 # ------------------------
+
+  rmdb:
+    << : *default-odoo
+    command: ['DockeryOdoo']
+    entrypoint: [dropdb, -hdb, -Uodoo]
+
+# -----------------------
 
   apply-patches:
     command: []
