@@ -108,6 +108,8 @@ static_resources:
           - {name: envoy.router}
           route_config:
             name: local_route
+            request_headers_to_add:
+            - header: {key: HTTP_X_FORWARDED_HOST, value: '%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%'}
             virtual_hosts:
             - domains: [mail.*]
               name: local_service
