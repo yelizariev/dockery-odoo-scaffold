@@ -130,7 +130,7 @@ info:
 	make help
 
 help:
-	@echo "$(ccbold)$(ccyellow)$(cculine)Useful alias for docker-comopose:$(ccend)"
+	@echo "$(ccbold)$(ccyellow)$(cculine)Useful alias for docker-compose:$(ccend)"
 	@echo ""
 	@echo "   $(ccyellow)alias dc=\"docker-compose\" $(ccgreen)"
 	@echo "   $(ccyellow)alias dcu=\"docker-compose up\" $(ccgreen)"
