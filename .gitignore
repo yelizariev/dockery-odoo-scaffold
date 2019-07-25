@@ -3,6 +3,9 @@ _testlogs/
 
 .cfg-custom.ini
 
+# Code refactoring snippets (eg. pybowler)
+refactoring.d/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
