@@ -121,6 +121,7 @@ services:
     << : *default-odoo
     command: ['-nDockeryOdoo', '-mmail']
     entrypoint: [/entrypoint.sh, dodoo, init]
+    depends_on: ['db']
 
 # ------------------------
 
