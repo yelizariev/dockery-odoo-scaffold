@@ -6,10 +6,14 @@ x-odoo:
   tty: true
   image: "${IMAGE}:edge-${ODOO_VERSION}-devops"
   # ports: ['80:8069', '8072:8072']
-  # Comment on layered projects
   environment:
+    # Comment out ODOO_ overrides on layered projects
     - ODOO_CMD=/opt/odoo/vendor/odoo/cc/odoo-bin
     - ODOO_FRM=/opt/odoo/vendor/odoo/cc
+    - WDB_SOCKET_SERVER=wdb
+    - WDB_SOCKET_PORT=19840
+    - WDB_WEB_SERVER=wdb.localhost
+    - WDB_WEB_PORT=80
   secrets:
     - source: adminpwd
       target: /run/secrets/adminpwd
@@ -83,13 +87,6 @@ services:
     entrypoint: ['/entrypoint.sh']
     command: ['--dev', 'wdb,reload,qweb,werkzeug,xml']
     depends_on: ['db', 'wdb', 'proxy', 'smtpfake']
-    environment:
-      - ODOO_CMD=/opt/odoo/vendor/odoo/cc/odoo-bin
-      - ODOO_FRM=/opt/odoo/vendor/odoo/cc
-      - WDB_SOCKET_SERVER=wdb
-      - WDB_SOCKET_PORT=19840
-      - WDB_WEB_SERVER=wdb.localhost
-      - WDB_WEB_PORT=80
 
   # http://odoo.localhost
   odoo-redis:
