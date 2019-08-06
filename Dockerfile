@@ -26,5 +26,5 @@ ONBUILD COPY --chown=odoo:odoo  cfg.d                       "${ODOO_RC}"
 ONBUILD COPY --chown=odoo:odoo  patches.d                   "${PATCHES_DIR}"
 ONBUILD RUN /patches ${ODOO_BASEPATH} || true
 
-ONBUILD WORKDIR ${ODOO_BASEPATH}/src${LAYER_SUFFIX}
+ONBUILD WORKDIR ${ODOO_BASEPATH}/src
 # ============================================================
