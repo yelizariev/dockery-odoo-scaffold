@@ -129,6 +129,13 @@ info:
 	@echo ""
 	make help
 
+alias:
+	@echo "alias dc=\"docker-compose\""
+	@echo "complete -F _docker_compose dc"
+	@echo "alias dcu=\"docker-compose up\""
+	@echo "alias dcd=\"docker-compose down\""
+	@echo "alias dcr=\"docker-compose run\""
+
 help:
 	@echo "$(ccbold)$(ccyellow)$(cculine)Useful alias for docker-compose:$(ccend)"
 	@echo ""
@@ -136,6 +143,8 @@ help:
 	@echo "   $(ccyellow)alias dcu=\"docker-compose up\" $(ccgreen)"
 	@echo "   $(ccyellow)alias dcd=\"docker-compose down\" $(ccgreen)"
 	@echo "   $(ccyellow)alias dcr=\"docker-compose run\" $(ccgreen)"
+	@echo ""
+	@echo "   $(ccyellow)make alias >> ~/.bash_aliases $(ccgreen)"
 	@echo ""
 	@echo "$(ccbold)$(ccyellow)$(cculine)Kick off odoo:$(ccend)"
 	@echo ""
