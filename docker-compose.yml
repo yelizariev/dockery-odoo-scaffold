@@ -10,6 +10,7 @@ x-odoo:
     # Comment out ODOO_ overrides on layered projects
     - ODOO_CMD=/opt/odoo/vendor/odoo/cc/odoo-bin
     - ODOO_FRM=/opt/odoo/vendor/odoo/cc
+    - PYTHONPATH=:/opt/odoo/vendor/odoo/cc
     - WDB_SOCKET_SERVER=wdb
     - WDB_SOCKET_PORT=19840
     - WDB_WEB_SERVER=wdb.localhost
