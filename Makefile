@@ -29,6 +29,7 @@ TEST := $(shell git submodule --quiet foreach git status --porcelain)
 ifneq ($(TEST),)
 patch:
 	@echo "$(ccred)$(ccbold)Clean your vendor workdirs before applying patches.$(ccend)"
+	@echo "$(ccred)Then, run $(ccbold)make patch$(ccend)$(ccred) again.$(ccend)"
 	@echo "$(ccyellow)Run $(ccbold)git submodule foreach git status --porcelain$(ccend)$(ccyellow) for more info.$(ccend)"
 else
 patch: patch-docs
@@ -77,8 +78,6 @@ build-base-docs:
 	@echo "  - Other vendored modules (\`vendor\` folder)"
 	@echo "  - Project modules (\`src\` folder)"
 	@echo "  - Customizations from the Dockerfile$(ccend)"
-	@echo "$(ccyellow)Note1: dockery-odoo patches are applied and baked into the image.$(ccend)"
-	@echo "$(ccyellow)Note2: running this again, docker's build cache might kick in.$(ccend)"
 	@echo "---------------------------------------------------------------------"
 
 build-devops-docs:
@@ -89,8 +88,6 @@ build-devops-docs:
 	@echo "  - Headless browser for JS tests."
 	@echo "  - Some advanced module templates."
 	@echo "  - For details, visit: https://git.io/fjOtu$(ccend)"
-	@echo "$(ccyellow)Note1: dockery-odoo patches are applied and baked into the image$(ccend)"
-	@echo "$(ccyellow)Note2: running this again, docker's build cache might kick in.$(ccend)"
 	@echo "---------------------------------------------------------------------"
 
 
@@ -104,7 +101,6 @@ patch-docs:
 	@echo "  - Host volumes are bind-mounted in read-write mode."
 	@echo "  - Therefore, changes reflect in your host's working directory."
 	@echo "  - Pay attention to the $(ccgreen)green texts$(ccyellow) to see which patch is applied where."
-	@echo "  - $(ccred)Failures$(ccyellow) indicate patches are already applied. No worries!$(ccend)"
 	@echo "---------------------------------------------------------------------"
 
 
