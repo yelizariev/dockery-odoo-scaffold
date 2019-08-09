@@ -23,8 +23,17 @@ endif
 
 create: pull build patch build
 
+patch:
+
+TEST := $(shell git submodule --quiet foreach git status --porcelain)
+ifneq ($(TEST),)
+patch:
+	@echo "$(ccred)$(ccbold)Clean your vendor workdirs before applying patches.$(ccend)"
+	@echo "$(ccyellow)Run $(ccbold)git submodule foreach git status --porcelain$(ccend)$(ccyellow) for more info.$(ccend)"
+else
 patch: patch-docs
 	docker-compose run apply-patches
+endif
 
 update:
 	git remote add scaffold https://github.com/xoe-labs/dockery-odoo-scaffold.git 2> /dev/null || true
