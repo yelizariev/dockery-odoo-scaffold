@@ -3,7 +3,7 @@ include: '.gitlab-ci.setup.yml'
 Test-Diff:
   extends: .tests
   only:
-    refs: [branches]
+    refs: [merge_requests]
     changes: ['vendor/**/*', 'src/**/*']
   script:
   - dodoo test -d "${ODOO_DB_NAME}" --git-dir ./.git "origin/${ODOO_VERSION}"
