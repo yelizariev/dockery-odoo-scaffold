@@ -124,7 +124,7 @@ stages:
   script:
   - docker login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
 
-  - image="${IMAGE}:${CI_COMMIT_REF_NAME}-${ODOO_VERSION}"
+  - image="${IMAGE}:${CI_COMMIT_TAG:-edge}-${ODOO_VERSION}"
   - fromimage="${FROM}:${FROM_VERSION}-${ODOO_VERSION}"
 
   - docker build --tag "${image}" --build-arg FROM_IMAGE="${fromimage}" .

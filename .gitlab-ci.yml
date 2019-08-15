@@ -40,7 +40,8 @@ Test-Weekly:
 Build-Twins:
   extends: .builds
   only:
-    refs: [branches]
+    refs:
+      - /^master|13\.0|12\.0|11\.0|10\.0|9\.0|8\.0|7\.0|6\.0|6\.1|5\.0$/
     changes:
       - migration.d/*
       - patches.d/*
@@ -50,6 +51,7 @@ Build-Twins:
 
 Release:
   extends: .builds
-  only: [tags]
+  only:
+    - /^v?\d+\.\d+\.\d+$/
   except:
     refs: ['schedules']
