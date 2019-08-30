@@ -95,7 +95,7 @@ stages:
 
   # Apply DockeryOdoo patches from the CI runtime image in case checked-in odoo
   # does not already contain it fail gracefully, if it does.
-  - /patches /opt/odoo/patches.d || true
+  - /patches "${ODOO_BASEPATH}" /opt/odoo/patches.d || true
 
   - if [[ -r "${CI_PROJECT_DIR}/.adminpwd" ]]; then export ODOO_ADMINPASSWORD_FILE="${CI_PROJECT_DIR}/.adminpwd"; fi
   - source /entrypoint.d/05-set-appenv-ci.sh
