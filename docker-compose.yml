@@ -7,7 +7,7 @@ x-odoo:
   image: "${IMAGE}:edge-${ODOO_VERSION}-devops"
   # ports: ['80:8069', '8072:8072']
   environment:
-    # Comment out ODOO_ overrides on layered projects
+    # Comment out ODOO_* & PYTHONPATH overrides on layered projects
     - ODOO_CMD=/opt/odoo/vendor/odoo/cc/odoo-bin
     - ODOO_FRM=/opt/odoo/vendor/odoo/cc
     - PYTHONPATH=:/opt/odoo/vendor/odoo/cc
