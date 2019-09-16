@@ -163,7 +163,7 @@ help:
 	@echo "   $(ccyellow)dcr odoo -d <DB> -u <MOD>$(ccgreen)       ▸ standard odoo"
 	@echo "   $(ccyellow)dcr odoo shell $(ccgreen)                 ▸ access an odoo shell"
 	@echo "   $(ccyellow)dcr scaffold $(ccgreen)                   ▸ scaffold a module"
-	@echo "   $(ccyellow)dcr dodoo pytests $(ccgreen)              ▸ run your pytests"
+	@echo "   $(ccyellow)dcr dodoo pytest $(ccgreen)              ▸ run your pytests"
 	@echo "   $(ccyellow)dcr dodoo --help $(ccgreen)               ▸ say hello to dodoo"
 	@echo ""
 	@echo "$(ccbold)$(ccyellow)$(cculine)Other maintenance commands:$(ccend)"
