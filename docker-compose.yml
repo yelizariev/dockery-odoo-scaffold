@@ -80,7 +80,7 @@ services:
   smtpfake: {image: mailhog/mailhog}
   # http://wdb.localhost
   wdb:
-    image: kozea/wdb:3.2.5
+    image: kozea/wdb:3.3.0
     ports: ['1984:1984']
 
   # http://odoo.localhost
