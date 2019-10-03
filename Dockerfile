@@ -5,7 +5,9 @@ FROM ${FROM_IMAGE}
 
 ## Example of extending your project with custom libraries
 USER root
-# RUN pip install python-telegram-bot pandas numpy
+
+RUN pip install python-slugify
+
 USER odoo
 
 # ============================================================
