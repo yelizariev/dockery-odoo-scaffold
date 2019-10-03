@@ -18,6 +18,7 @@ x-odoo:
   secrets:
     - source: adminpwd
       target: /run/secrets/adminpwd
+  networks: [public, default]
   volumes:
   # Named Data volumes
   - odoo-data:/var/lib/odoo-persist
