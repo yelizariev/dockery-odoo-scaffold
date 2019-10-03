@@ -137,12 +137,7 @@ static_resources:
                 }
               - match: {prefix: /}
                 route: {
-                    cluster: target_odoo,
-                    # odoo has implemented a blocking UI
-                    # 15s is hardly enough, but expose bad design.
-                    # NOT FOR PRODUCTION!!!
-                    # consider using OCA/queue
-                    timeout: 15s
+                    cluster: target_odoo
                 }
             - domains: [cdnjs.cloudflare.com]
               name: local_service
