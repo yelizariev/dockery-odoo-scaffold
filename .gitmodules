@@ -10,3 +10,6 @@
 	path = vendor/odoo/cc
 	url = https://github.com/odoo/odoo.git
 	branch = 12.0
+[submodule "vendor/OCA/queue"]
+	path = vendor/OCA/queue
+	url = https://github.com/OCA/queue.git
