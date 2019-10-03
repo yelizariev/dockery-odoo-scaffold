@@ -1,0 +1,12 @@
+[submodule "vendor/it-projects-llc/saas-addons"]
+	path = vendor/it-projects-llc/saas-addons
+	url = https://github.com/it-projects-llc/saas-addons.git
+	branch = 12.0
+[submodule "vendor/it-projects-llc/access-addons"]
+	path = vendor/it-projects-llc/access-addons
+	url = https://github.com/it-projects-llc/access-addons.git
+	branch = 12.0
+[submodule "vendor/odoo/cc"]
+	path = vendor/odoo/cc
+	url = https://github.com/odoo/odoo.git
+	branch = 12.0
